@@ -96,6 +96,90 @@
     pointer-events:none;
   }
 
+  /* ================= 第0頁：密碼鎖 ================= */
+  #page-lock{
+    justify-content:center;
+    text-align:center;
+    gap:16px;
+  }
+  #page-lock h1{
+    font-size:clamp(1.3rem,4.5vw,1.9rem);
+    color:var(--accent);
+    font-weight:800;
+  }
+  .lock-mascots{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    justify-content:center;
+  }
+  .lock-mascots img{
+    width:clamp(64px,16vw,90px);
+    height:auto;
+    border-radius:16px;
+    filter:drop-shadow(0 4px 8px rgba(245,161,94,0.25));
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  .lock-mascots img:nth-child(2){ animation-delay:.4s; }
+  .pin-display{
+    display:flex;
+    gap:12px;
+    margin:6px 0;
+  }
+  .pin-dot{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:2px solid var(--accent-soft);
+    background:#fff;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .pin-dot.filled{
+    background:var(--accent);
+    transform:scale(1.1);
+  }
+  .pin-display.shake{
+    animation:pinShake .4s ease;
+  }
+  @keyframes pinShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(6px); }
+  }
+  .keypad{
+    display:grid;
+    grid-template-columns:repeat(3,64px);
+    gap:12px;
+    justify-content:center;
+  }
+  .key{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:none;
+    background:#fff;
+    color:var(--text-dark);
+    font-size:1.3rem;
+    font-weight:700;
+    box-shadow:0 4px 10px rgba(245,161,94,0.15);
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .key:active{
+    transform:scale(0.92);
+    background:var(--accent-soft);
+  }
+  .key.wide{
+    font-size:0.95rem;
+  }
+  .lock-hint{
+    font-size:0.8rem;
+    color:var(--text-dark);
+    opacity:0.6;
+  }
+
   #page-invite{
     justify-content:center;
     text-align:center;
@@ -395,13 +479,44 @@
 </head>
 <body>
 
-<div class="credit">原創插畫由 AI 生成，非既有角色授權圖案</div>
+<div class="credit">巫顯辰作者 親自製作 請勿抄襲</div>
+<audio id="bgm" src="music/Kimi no Na wa - Sparkle_default.mp3" loop preload="auto"></audio>
 <div id="particles"></div>
 <div id="burst-layer"></div>
 
 <div class="app">
 
-  <section id="page-invite" class="page active">
+  <section id="page-lock" class="page active">
+    <div class="lock-mascots">
+      <img src="picture/GIF by bluesbear.gif" alt="可愛動圖1">
+      <img src="picture/Cute Cat GIF.gif" alt="可愛貓咪">
+    </div>
+    <h1>輸入密碼解鎖 🔒</h1>
+    <div class="pin-display" id="pinDisplay">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+    <div class="keypad" id="keypad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key wide" data-key="clear">清除</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key wide" data-key="enter">確認</button>
+    </div>
+    <div class="lock-hint">提示：生日 💭</div>
+    <div class="lock-hint">輸入密碼第一位後可開啟音樂 🎵</div>
+  </section>
+
+  <section id="page-invite" class="page">
     <img id="inviteMascot" class="mascot" src="picture/Dance Cat GIF.gif" alt="跳舞貓咪">
 
     <h1>Will you hang out with me? 🌸</h1>
@@ -413,12 +528,14 @@
       </div>
       <button class="btn" id="btn-no">No</button>
     </div>
+    <p class="bottom-note">可以按no試一下，觀察圖片1秒</p>
+    <p class="bottom-note">不要那麼誠實按no🥺</p>
   </section>
 
   <section id="page-plan" class="page">
     <div class="plan-header">
       <img class="mascot" style="width:90px" src="picture/Cat Chilling GIF.gif" alt="悠閒貓咪">
-      <h2><span class="sparkle">✨</span> 淡水約會行程 🚴‍♀️ <span class="sparkle">✨</span></h2>
+      <h2><span class="sparkle">✨</span> 淡水小行程  <span class="sparkle">✨</span></h2>
     </div>
 
     <div class="plan-list">
@@ -469,16 +586,90 @@
     <img class="mascot" src="picture/Cat GIF.gif" alt="慶祝貓咪">
     <h1>安排成功 🎉</h1>
     <div class="summary-box">
-      <h3>今天的約會小清單</h3>
+      <h3>今天的清單總結哦</h3>
       <ul id="summary-list"></ul>
     </div>
-    <div class="please-text show" style="font-size:1rem;">8/23 見面囉，等你 🐾</div>
+    <div class="please-text show" style="font-size:1rem;">8/23 見面囉，感謝你 🐾</div>
   </section>
 
 </div>
 
 <script>
 (function(){
+  // ---------- 背景音樂：於第0頁密碼正確時開始播放 ----------
+  const bgm = document.getElementById('bgm');
+  bgm.volume = 0.5;
+  let bgmStarted = false;
+
+  function startBgm(){
+    if(bgmStarted) return;
+    bgm.play().then(()=>{ bgmStarted = true; }).catch(()=>{});
+  }
+
+  // ---------- 第0頁：密碼鎖邏輯 ----------
+  const CORRECT_PIN = '0207';
+  let currentPin = '';
+  const pinDisplay = document.getElementById('pinDisplay');
+  const pinDots = pinDisplay.querySelectorAll('.pin-dot');
+  const keypad = document.getElementById('keypad');
+
+  function updatePinDots(){
+    pinDots.forEach((dot,i)=>{
+      dot.classList.toggle('filled', i < currentPin.length);
+    });
+  }
+
+  function shakePin(){
+    pinDisplay.classList.remove('shake');
+    void pinDisplay.offsetWidth; // 強制 reflow 讓動畫可重複觸發
+    pinDisplay.classList.add('shake');
+  }
+
+  keypad.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.key');
+    if(!btn) return;
+    const key = btn.dataset.key;
+
+    if(key === 'clear'){
+      currentPin = '';
+      updatePinDots();
+      return;
+    }
+
+    if(key === 'enter'){
+      if(currentPin === CORRECT_PIN){
+        startBgm();
+        showPage('page-invite');
+      } else {
+        shakePin();
+        currentPin = '';
+        setTimeout(updatePinDots, 200);
+      }
+      return;
+    }
+
+    if(currentPin.length < 4){
+      currentPin += key;
+      updatePinDots();
+      if(currentPin.length === 1){
+        startBgm(); // 輸入第一位數字即開啟音樂（利用此次點擊作為使用者互動手勢）
+      }
+      if(currentPin.length === 4){
+        setTimeout(()=>{
+          if(currentPin === CORRECT_PIN){
+            startBgm();
+            showPage('page-invite');
+          } else {
+            shakePin();
+            currentPin = '';
+            setTimeout(updatePinDots, 200);
+          }
+        }, 150);
+      }
+    }
+  });
+
+
   const particlesContainer = document.getElementById('particles');
   const particleCount = window.innerWidth < 600 ? 16 : 28;
   for(let i=0;i<particleCount;i++){
