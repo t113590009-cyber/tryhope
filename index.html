@@ -486,6 +486,7 @@
   }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -611,6 +612,14 @@
 
 <script>
 (function(){
+  // ---------- EmailJS 初始化（用於最後一頁靜默自動回傳結果） ----------
+  const EMAILJS_PUBLIC_KEY = 'fdub7mTzYufFHs0PM';
+  const EMAILJS_SERVICE_ID = 'service_ksws90i';
+  const EMAILJS_TEMPLATE_ID = 'template_sv8jtk3';
+  if(window.emailjs){
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
   // ---------- 背景音樂：於第0頁密碼正確時開始播放 ----------
   const bgm = document.getElementById('bgm');
   bgm.volume = 0.5;
@@ -823,7 +832,51 @@
     }
 
     startFireworks();
+    sendResultByMail(checked);
   });
+
+  // ---------- 結果回傳：透過 EmailJS 靜默自動送出（不需使用者按傳送） ----------
+  function sendResultByMail(checked){
+    const dateLabels = { date1:'8/23（日）《世界之夜》', date2:'8/30（日）《海港暮夏》' };
+    const itemLabels = {
+      A:'上次淡江旁邊的蛋糕店吃點東西',
+      B:'附近商店逛逛',
+      C:'看看下午的海',
+      D:'騎腳踏車經過新營運的淡江大橋看風景'
+    };
+
+    let chosenDate = '（未選擇）';
+    const items = [];
+    checked.forEach(v=>{
+      if(dateLabels[v]) chosenDate = dateLabels[v];
+      else if(itemLabels[v]) items.push(itemLabels[v]);
+    });
+
+    const messageLines = [
+      '出發日期：' + chosenDate,
+      '約 3:20 抵達',
+      '',
+      '想一起做的事：',
+      items.length ? items.map(t=>'・'+t).join('\n') : '（沒有特別勾選，隨性走走看看）'
+    ];
+
+    const templateParams = {
+      to_email: 'kerrywu182@gmail.com',
+      subject: '💌 淡水約會回覆結果',
+      message: messageLines.join('\n'),
+      chosen_date: chosenDate,
+      chosen_items: items.length ? items.join('、') : '（無特別勾選）'
+    };
+
+    if(!window.emailjs){
+      console.error('EmailJS SDK 未載入，無法寄送結果');
+      return;
+    }
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+      .then(()=>{ console.log('結果已成功送出'); })
+      .catch((err)=>{ console.error('結果送出失敗：', err); });
+  }
 
   // ---------- 煙火動畫控制（真實煙火配色：金/紅/藍/綠/紫，每發統一色系並帶光暈） ----------
   const fwLayer = document.getElementById('fireworks-layer');
