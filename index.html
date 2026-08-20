@@ -350,6 +350,16 @@
     0%,100%{ transform:translateY(0) rotate(0deg); }
     50%{ transform:translateY(-3px) rotate(-6deg); }
   }
+  .fixed-note{
+    margin-top:10px;
+    font-size:0.9rem;
+    color:var(--text-dark);
+    opacity:0.8;
+    font-weight:600;
+  }
+  .check-item input[type="radio"]{
+    accent-color:var(--accent);
+  }
   .checklist{
     display:flex;
     flex-direction:column;
@@ -541,7 +551,12 @@
     <div class="plan-list">
       <div class="plan-card">
         <span class="time-tag">2:30 出發</span>
-        <div class="title">🚗 8/23（六）出發前往淡水，約 3:20 抵達 <span class="mini-cat">🐱</span></div>
+        <div class="title" style="margin-bottom:6px;">📅 選一個出發日期 <span class="mini-cat">🐱</span></div>
+        <div class="checklist">
+          <label class="check-item"><input type="radio" name="dateChoice" value="date1"><span>8/23（日）主題：《世界之夜》</span></label>
+          <label class="check-item"><input type="radio" name="dateChoice" value="date2"><span>8/30（日）主題：《海港暮夏》</span></label>
+        </div>
+        <div class="fixed-note">🚗 約 3:20 抵達</div>
       </div>
 
       <div class="plan-card">
@@ -768,6 +783,8 @@
   });
 
   const labelMap = {
+    date1: '📅 8/23（日）《世界之夜》',
+    date2: '📅 8/30（日）《海港暮夏》',
     A: '上次淡江旁邊的蛋糕店吃點東西 🍰',
     B: '附近商店逛逛 🛍️',
     C: '看看下午的海 🌊',
@@ -786,7 +803,7 @@
     } else {
       checked.forEach(v=>{
         const li = document.createElement('li');
-        li.textContent = labelMap[v];
+        li.textContent = labelMap[v] || v;
         list.appendChild(li);
       });
     }
