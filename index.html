@@ -1256,7 +1256,6 @@
 
   // ---------- Yes：文字跟影片分開看（先字幕全播完，再單獨播影片） ----------
   function startSeparateFlow(){
-    primeStoryVideo();
     const pageVideo = document.getElementById('page-video');
     pageVideo.classList.remove('has-video');
     pageVideo.classList.remove('video-only');
@@ -1286,7 +1285,6 @@
 
   // ---------- No：文字跟影片一起播（影片播完才換頁） ----------
   function startTogetherFlow(){
-    primeStoryVideo();
     const pageVideo = document.getElementById('page-video');
     pageVideo.classList.add('has-video');
     pageVideo.classList.remove('video-only');
