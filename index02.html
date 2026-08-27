@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Will you hang out with me? 🌸</title>
+<style>
+  :root{
+    --bg-a:#0F1226;
+    --bg-b:#1B1030;
+    --accent:#F5A15E;
+    --accent-soft:#FFC98A;
+    --mint:#7FD8C4;
+    --text-dark:#F3E7D9;
+    --card-bg:#221A3B;
+    --card-border:#3A2C5C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{
+    height:100%;
+    overflow:hidden;
+  }
+  body{
+    font-family:'Helvetica Neue',"PingFang TC","Microsoft JhengHei",sans-serif;
+    background:radial-gradient(ellipse at 30% 10%, #241a42 0%, var(--bg-a) 45%, var(--bg-b) 100%);
+    color:var(--text-dark);
+    position:relative;
+  }
+
+  /* ---------- 流星（史詩感火球隕石：珍珠白核心 + 火焰/煙霧/電光綠電漿尾，帶分裂殘片） ---------- */
+  #meteors{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .meteor{
+    position:absolute;
+    width:260px;
+    height:5px;
+    background:linear-gradient(90deg,
+      rgba(120,255,170,0) 0%,
+      rgba(120,255,170,0.35) 18%,
+      rgba(255,140,60,0.55) 42%,
+      rgba(255,210,140,0.8) 65%,
+      #FFF9EC 88%,
+      #FFFFFF 100%);
+    border-radius:999px;
+    filter:drop-shadow(0 0 10px rgba(255,180,110,0.65)) drop-shadow(0 0 16px rgba(120,255,170,0.35));
+    animation:meteorFly linear forwards;
+    opacity:0;
+  }
+  .meteor::before{
+    /* 分裂殘片：主體尾端裂出的小火焰碎片 */
+    content:'';
+    position:absolute;
+    left:35%;
+    top:-6px;
+    width:60px;
+    height:2px;
+    background:linear-gradient(90deg, rgba(140,255,180,0) 0%, rgba(140,255,180,0.6) 50%, rgba(255,255,255,0.8) 100%);
+    border-radius:999px;
+    transform:rotate(14deg);
+    filter:blur(0.4px);
+  }
+  .meteor::after{
+    content:'';
+    position:absolute;
+    right:-5px;
+    top:-6px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:radial-gradient(circle, #FFFFFF 0%, #FFE9C8 40%, rgba(255,170,90,0.5) 70%, rgba(120,255,170,0.2) 100%);
+    box-shadow:0 0 20px 6px rgba(255,220,180,0.85), 0 0 34px 10px rgba(120,255,170,0.3);
+  }
+  @keyframes meteorFly{
+    0%{ transform:translate(0,0) rotate(-34deg) scale(0.85); opacity:0; }
+    6%{ opacity:1; }
+    50%{ opacity:0.95; }
+    100%{ transform:translate(-820px,600px) rotate(-34deg) scale(0.6); opacity:0; }
+  }
+
+  #particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .particle{
+    position:absolute;
+    bottom:-40px;
+    border-radius:50%;
+    background:rgba(245,161,94,0.35);
+    box-shadow:0 0 6px 1px rgba(245,161,94,0.3);
+    animation:floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.9; }
+    90%{ opacity:0.6; }
+    100%{ transform:translateY(-110vh) translateX(var(--drift,20px)) rotate(360deg); opacity:0; }
+  }
+
+  .app{
+    position:relative;
+    z-index:1;
+    height:100%;
+    width:100%;
+  }
+  .page{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:clamp(16px,4vw,40px);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .page.active{
+    display:flex;
+    animation:fadeIn .5s ease;
+  }
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(12px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .mascot{
+    width:clamp(90px,22vw,140px);
+    height:auto;
+    object-fit:contain;
+    border-radius:20px;
+    animation:bob 2.4s ease-in-out infinite;
+    filter:drop-shadow(0 6px 10px rgba(245,161,94,0.25));
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0) rotate(-2deg); }
+    50%{ transform:translateY(-10px) rotate(2deg); }
+  }
+
+  .credit{
+    position:fixed;
+    top:8px;
+    left:10px;
+    font-size:0.62rem;
+    color:var(--text-dark);
+    opacity:0.45;
+    z-index:20;
+    pointer-events:none;
+  }
+
+  /* ================= 第-1頁：開場按鈕 ================= */
+  #page-start{
+    justify-content:center;
+    align-items:center;
+  }
+
+  /* ================= 圖片轉場頁 ================= */
+  #page-transition{
+    justify-content:center;
+    align-items:center;
+    background:#000;
+  }
+  .transition-img{
+    width:100%;
+    max-width:520px;
+    max-height:50vh;
+    object-fit:contain;
+    border-radius:18px;
+    box-shadow:0 0 40px rgba(245,161,94,0.35);
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  .transition-img.show{
+    opacity:1;
+  }
+
+  /* ================= 第0頁：密碼鎖 ================= */
+  #page-lock{
+    justify-content:center;
+    text-align:center;
+    gap:16px;
+  }
+  #page-lock h1{
+    font-size:clamp(1.3rem,4.5vw,1.9rem);
+    color:var(--accent);
+    font-weight:800;
+  }
+  .lock-mascots{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    justify-content:center;
+  }
+  .lock-mascots img{
+    width:clamp(64px,16vw,90px);
+    height:auto;
+    border-radius:16px;
+    filter:drop-shadow(0 4px 8px rgba(245,161,94,0.25));
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  .lock-mascots img:nth-child(2){ animation-delay:.4s; }
+  .pin-display{
+    display:flex;
+    gap:12px;
+    margin:6px 0;
+  }
+  .pin-dot{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:2px solid var(--accent-soft);
+    background:var(--card-bg);
+    transition:background .15s ease, transform .15s ease;
+  }
+  .pin-dot.filled{
+    background:var(--accent);
+    transform:scale(1.1);
+  }
+  .pin-display.shake{
+    animation:pinShake .4s ease;
+  }
+  @keyframes pinShake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(6px); }
+  }
+  .keypad{
+    display:grid;
+    grid-template-columns:repeat(3,64px);
+    gap:12px;
+    justify-content:center;
+  }
+  .key{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:none;
+    background:var(--card-bg);
+    color:var(--text-dark);
+    font-size:1.3rem;
+    font-weight:700;
+    box-shadow:0 4px 10px rgba(245,161,94,0.15);
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .key:active{
+    transform:scale(0.92);
+    background:var(--accent-soft);
+  }
+  .key.wide{
+    font-size:0.95rem;
+  }
+  .lock-hint{
+    font-size:0.8rem;
+    color:var(--text-dark);
+    opacity:0.6;
+  }
+
+  #page-invite{
+    justify-content:center;
+    text-align:center;
+    gap:20px;
+  }
+  #page-invite h1{
+    font-size:clamp(1.6rem,5vw,2.6rem);
+    color:var(--accent);
+    font-weight:800;
+    line-height:1.4;
+    text-shadow:0 0 18px rgba(245,161,94,0.5);
+    max-width:560px;
+  }
+  .btn-row{
+    position:relative;
+    display:flex;
+    gap:24px;
+    align-items:center;
+    justify-content:center;
+    margin-top:10px;
+    width:100%;
+    min-height:160px;
+  }
+  .btn{
+    border:none;
+    border-radius:999px;
+    padding:16px 38px;
+    font-size:clamp(1rem,3vw,1.2rem);
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(245,161,94,0.3);
+    transition:transform .15s ease;
+  }
+  .btn:active{ transform:scale(0.94); }
+  #btn-yes{
+    background:var(--accent);
+    color:#fff;
+  }
+  #btn-yes:hover{ transform:translateY(-3px) scale(1.03); }
+  #btn-no{
+    background:var(--card-bg);
+    color:var(--accent);
+    border:2px solid var(--accent-soft);
+    position:relative;
+    transition:left .3s cubic-bezier(.34,1.56,.64,1), top .3s cubic-bezier(.34,1.56,.64,1), transform .15s ease;
+  }
+  #btn-no.fleeing{
+    position:fixed;
+  }
+  .yes-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .please-text{
+    font-size:0.95rem;
+    color:var(--accent);
+    opacity:0;
+    transform:translateY(-6px);
+    transition:all .3s ease;
+    font-weight:600;
+  }
+  .please-text.show{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  #burst-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:50;
+    display:none;
+  }
+  #burst-layer.active{ display:block; }
+  .burst-piece{
+    position:absolute;
+    font-size:1.6rem;
+    animation:burstPop 1s ease-out forwards;
+  }
+  @keyframes burstPop{
+    0%{ transform:translate(-50%,-50%) scale(0); opacity:1; }
+    70%{ opacity:1; }
+    100%{ transform:translate(calc(-50% + var(--hx)),calc(-50% + var(--hy))) scale(1.4); opacity:0; }
+  }
+
+  #page-plan{
+    gap:14px;
+    padding-bottom:100px;
+  }
+  .plan-header{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .plan-header h2{
+    color:var(--accent);
+    font-size:clamp(1.3rem,4vw,1.8rem);
+  }
+  .plan-list{
+    width:100%;
+    max-width:520px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .plan-card{
+    background:var(--card-bg);
+    border-radius:20px;
+    padding:16px 20px;
+    box-shadow:0 4px 14px rgba(245,161,94,0.15);
+    border:1.5px solid var(--card-border);
+    opacity:0;
+    transform:translateY(14px);
+    animation:cardIn .5s ease forwards;
+  }
+  .plan-list .plan-card:nth-child(1){ animation-delay:.05s; }
+  .plan-list .plan-card:nth-child(2){ animation-delay:.15s; }
+  .plan-list .plan-card:nth-child(3){ animation-delay:.25s; }
+  .plan-list .plan-card:nth-child(4){ animation-delay:.35s; }
+  .plan-list .plan-card:nth-child(5){ animation-delay:.45s; }
+  .plan-list .plan-card:nth-child(6){ animation-delay:.55s; }
+  @keyframes cardIn{
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .check-item{
+    animation:none;
+  }
+  .check-item span{
+    display:inline-block;
+    transition:transform .15s ease;
+  }
+  .check-item.checked span{
+    transform:translateX(2px);
+  }
+  .sparkle{
+    display:inline-block;
+    animation:sparkleTwinkle 1.8s ease-in-out infinite;
+  }
+  .sparkle:nth-child(2){ animation-delay:.4s; }
+  @keyframes sparkleTwinkle{
+    0%,100%{ opacity:0.4; transform:scale(0.9) rotate(0deg); }
+    50%{ opacity:1; transform:scale(1.15) rotate(10deg); }
+  }
+  .plan-card .time-tag{
+    display:inline-block;
+    background:var(--accent-soft);
+    color:#7a4a1c;
+    font-size:0.75rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:999px;
+    margin-bottom:6px;
+  }
+  .plan-card .title{
+    font-weight:700;
+    font-size:1.02rem;
+  }
+  .mini-cat{
+    display:inline-block;
+    font-size:0.9em;
+    animation:miniCatBounce 2.2s ease-in-out infinite;
+  }
+  @keyframes miniCatBounce{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-3px) rotate(-6deg); }
+  }
+  .fixed-note{
+    margin-top:10px;
+    font-size:0.9rem;
+    color:var(--text-dark);
+    opacity:0.8;
+    font-weight:600;
+  }
+  .check-item input[type="radio"]{
+    accent-color:var(--accent);
+  }
+  .checklist{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:8px;
+  }
+  .check-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+    padding:10px 14px;
+    cursor:pointer;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .check-item:active{ transform:scale(0.98); }
+  .check-item input{
+    width:20px;
+    height:20px;
+    accent-color:var(--accent);
+    cursor:pointer;
+  }
+  .check-item.checked{
+    background:rgba(127,216,196,0.22);
+    border-color:var(--mint);
+  }
+  .fixed-bottom-bar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    padding:14px clamp(16px,4vw,40px) calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top, var(--bg-b) 70%, transparent);
+    display:flex;
+    justify-content:center;
+    z-index:10;
+  }
+  #btn-confirm{
+    background:var(--accent);
+    color:#fff;
+    width:100%;
+    max-width:520px;
+  }
+
+  #page-done{
+    justify-content:center;
+    text-align:center;
+    gap:16px;
+  }
+  #page-done h1{
+    font-size:clamp(1.8rem,6vw,2.8rem);
+    color:var(--accent);
+  }
+  .summary-box{
+    background:var(--card-bg);
+    border-radius:20px;
+    padding:20px 24px;
+    max-width:480px;
+    width:100%;
+    box-shadow:0 4px 14px rgba(245,161,94,0.15);
+    text-align:left;
+  }
+  .summary-box h3{
+    color:var(--accent);
+    margin-bottom:10px;
+    font-size:1rem;
+  }
+  #summary-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    font-size:0.92rem;
+  }
+  #summary-list li::before{
+    content:"🐾 ";
+  }
+  .confetti-wrap{
+    position:relative;
+    width:100%;
+    height:0;
+  }
+  .confetti{
+    position:absolute;
+    top:-20px;
+    font-size:1.2rem;
+    animation:confettiFall 2.6s linear forwards;
+  }
+  @keyframes confettiFall{
+    0%{ transform:translateY(-20px) rotate(0deg); opacity:1;}
+    100%{ transform:translateY(60vh) rotate(360deg); opacity:0;}
+  }
+
+  /* ---------- 煙火動畫（第三頁） ---------- */
+  #fireworks-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+    overflow:hidden;
+  }
+  .fw-spark{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    animation:fwPop 1.15s cubic-bezier(.15,.6,.4,1) forwards;
+  }
+  @keyframes fwPop{
+    0%{ transform:translate(0,0) scale(1.3); opacity:1; }
+    70%{ opacity:0.9; }
+    100%{ transform:translate(var(--fx),var(--fy)) scale(0.2); opacity:0; }
+  }
+  .fw-flash{
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--card-bg);
+    box-shadow:0 0 18px 6px rgba(255,255,255,0.8);
+    animation:fwFlash .35s ease-out forwards;
+  }
+  @keyframes fwFlash{
+    0%{ transform:scale(0); opacity:1; }
+    100%{ transform:scale(6); opacity:0; }
+  }
+
+  /* ================= go.md 新增：開場頁提示與圖片 ================= */
+  .start-hint{
+    font-size:0.85rem;
+    color:var(--text-dark);
+    opacity:0.75;
+    margin-bottom:10px;
+    text-align:center;
+    max-width:280px;
+  }
+  .start-cuddle-img{
+    width:clamp(110px,28vw,170px);
+    height:auto;
+    border-radius:18px;
+    margin-bottom:16px;
+    filter:drop-shadow(0 6px 10px rgba(245,161,94,0.25));
+    animation:bob 2.4s ease-in-out infinite;
+  }
+
+  .bottom-note{
+    font-size:0.8rem;
+    color:var(--text-dark);
+    opacity:0.65;
+    text-align:center;
+    max-width:420px;
+    margin-top:4px;
+    line-height:1.5;
+  }
+
+  /* ================= go.md 新增：翻滾字幕（3D Roll） ================= */
+  .caption-page{
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    gap:22px;
+  }
+  .caption-stage{
+    perspective:900px;
+    width:100%;
+    max-width:640px;
+    height:clamp(150px,30vh,220px);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .caption-line{
+    position:absolute;
+    left:0; right:0;
+    padding:0 clamp(16px,4vw,10px);
+    transition:transform .5s cubic-bezier(.4,.1,.2,1), opacity .5s ease;
+    transform-style:preserve-3d;
+  }
+  .caption-line.current{
+    position:relative;
+    font-size:clamp(1.05rem,3.6vw,1.55rem);
+    font-weight:800;
+    color:#FFFFFF;
+    text-shadow:0 0 16px rgba(245,161,94,0.35);
+    opacity:1;
+    transform:translateY(0) rotateX(0deg);
+    line-height:1.6;
+  }
+  .caption-line.prev{
+    top:calc(50% - 66px);
+    opacity:0.28;
+    transform:translateY(0) rotateX(35deg);
+    font-size:clamp(0.85rem,2.6vw,1.05rem);
+    color:var(--text-dark);
+  }
+  .caption-line.next{
+    top:calc(50% + 66px);
+    opacity:0.28;
+    transform:translateY(0) rotateX(-35deg);
+    font-size:clamp(0.85rem,2.6vw,1.05rem);
+    color:var(--text-dark);
+  }
+  .caption-line.enter-current{
+    animation:rollIn .5s cubic-bezier(.4,.1,.2,1);
+  }
+  @keyframes rollIn{
+    0%{ opacity:0.2; transform:translateY(30px) rotateX(35deg); }
+    100%{ opacity:1; transform:translateY(0) rotateX(0deg); }
+  }
+  .btn-pause{
+    border:2px solid var(--accent-soft);
+    background:var(--card-bg);
+    color:var(--accent);
+    padding:9px 22px;
+    border-radius:999px;
+    font-size:0.9rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .btn-pause:active{ transform:scale(0.94); }
+  .btn-pause.floating{
+    position:fixed;
+    bottom:calc(18px + env(safe-area-inset-bottom));
+    left:50%;
+    transform:translateX(-50%);
+    z-index:15;
+    background:rgba(34,26,59,0.85);
+    backdrop-filter:blur(4px);
+  }
+
+  /* ================= go.md 新增：影片＋字幕頁 ================= */
+  #page-video{
+    padding:0;
+    justify-content:flex-start;
+  }
+  #page-video.has-video #storyVideo{
+    display:block;
+    width:100%;
+    max-height:50vh;
+    aspect-ratio:16/9;
+    object-fit:contain;
+    background:#000;
+  }
+  #videoCaptionWrap{
+    flex:1;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:clamp(16px,4vw,40px);
+    padding-bottom:90px;
+  }
+
+  /* ================= go.md 新增：淡水煙火邀請頁 ================= */
+  #page-fireworks-invite{
+    justify-content:center;
+    text-align:center;
+    gap:20px;
+  }
+  .firework-invite-box{
+    background:var(--card-bg);
+    border:1.5px solid var(--card-border);
+    border-radius:22px;
+    padding:26px clamp(18px,5vw,32px);
+    max-width:560px;
+    width:100%;
+    box-shadow:0 4px 14px rgba(245,161,94,0.15);
+    text-align:left;
+  }
+  .firework-invite-box p{
+    font-size:0.98rem;
+    line-height:1.9;
+    margin-bottom:12px;
+    color:var(--text-dark);
+  }
+  .firework-invite-box p:last-child{ margin-bottom:0; }
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+<div class="credit">巫顯辰作者 親自製作 請勿抄襲</div>
+<audio id="bgm" src="music/Kimi no Na wa - Sparkle_default.mp3" preload="auto"></audio>
+<audio id="bgm2" src="music/Benson_Boone_-_In_The_Stars_(mp3.pm).mp3" loop preload="auto"></audio>
+<div id="meteors"></div>
+<div id="particles"></div>
+<div id="burst-layer"></div>
+
+<div class="app">
+
+  <section id="page-start" class="page active">
+    <img class="start-cuddle-img" src="picture/cuddles GIF.gif" alt="cuddles">
+    <div class="start-hint">請麻煩仔細看每個細節，感謝您唷</div>
+    <button class="btn" id="btn-start" style="padding:22px 50px; font-size:clamp(1.1rem,3.5vw,1.4rem);"> 點我開始哦 </button>
+    <div class="lock-hint" style="margin-top:14px;">🔊 按下開始後會有音樂，請開大手機音量</div>
+  </section>
+
+  <section id="page-transition" class="page">
+    <img id="transitionImg" class="transition-img" src="" alt="">
+  </section>
+
+  <section id="page-lock" class="page">
+    <div class="lock-mascots">
+      <img src="picture/GIF by bluesbear.gif" alt="可愛動圖1">
+      <img src="picture/Cute Cat GIF.gif" alt="可愛貓咪">
+    </div>
+    <h1>輸入密碼解鎖 🔒</h1>
+    <div class="pin-display" id="pinDisplay">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+    <div class="keypad" id="keypad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key wide" data-key="clear">清除</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key wide" data-key="enter">確認</button>
+    </div>
+    <div class="lock-hint">提示：生日 💭</div>
+  </section>
+
+  <section id="page-monologue" class="page caption-page">
+    <div class="caption-stage" id="monoStage">
+      <div class="caption-line prev" id="monoPrev"></div>
+      <div class="caption-line current" id="monoCurrent"></div>
+      <div class="caption-line next" id="monoNext"></div>
+    </div>
+    <button class="btn-pause" id="monoPauseBtn">⏸ 暫停</button>
+    <div class="btn-row" id="monoChoiceRow" style="display:none;">
+      <button class="btn" id="mono-yes">Yes</button>
+      <button class="btn" id="mono-no">No</button>
+    </div>
+    <p class="bottom-note" id="monoChoiceHint" style="display:none;">影片搭配字幕可以按暫停</p>
+  </section>
+
+  <section id="page-video" class="page">
+    <video id="storyVideo" src="video/v.mov" playsinline preload="auto"></video>
+    <div id="videoCaptionWrap">
+      <div class="caption-stage" id="vidStage">
+        <div class="caption-line prev" id="vidPrev"></div>
+        <div class="caption-line current" id="vidCurrent"></div>
+        <div class="caption-line next" id="vidNext"></div>
+      </div>
+    </div>
+    <button class="btn-pause floating" id="vidPauseBtn">⏸ 暫停</button>
+  </section>
+
+  <section id="page-fireworks-invite" class="page">
+    <div class="firework-invite-box">
+      <p>其實之前我有計劃一起去淡水看煙火，只是沒想到最後我讓你失望透頂了。</p>
+      <p>我想問問你，你願意陪我一起去看煙火嗎？</p>
+      <p>你真的不用有任何壓力，我什麼都不會做，也不會要求你什麼。就安安靜靜地一起看場煙火就好。看完之後，如果你願意，也讓我陪你回家。</p>
+      <p>就當作是我這個朋友，想完成的一個小小心願。</p>
+    </div>
+    <button class="btn" id="btn-continue-invite">繼續 🎆</button>
+  </section>
+
+  <section id="page-invite" class="page">
+    <img id="inviteMascot" class="mascot" src="picture/Dance Cat GIF.gif" alt="跳舞貓咪">
+
+    <h1>Will you hang out with me? 🌸</h1>
+
+    <div class="btn-row" id="btnRow">
+      <div class="yes-col">
+        <button class="btn" id="btn-yes">Yes 🐾</button>
+        <div class="please-text" id="pleaseText">please 🥺</div>
+      </div>
+      <button class="btn" id="btn-no">No</button>
+    </div>
+    <p class="bottom-note">可以按no試一下，觀察圖片1秒</p>
+    <p class="bottom-note">不要那麼誠實按no🥺</p>
+  </section>
+
+  <section id="page-plan" class="page">
+    <div class="plan-header">
+      <img class="mascot" style="width:90px" src="picture/Cat Chilling GIF.gif" alt="悠閒貓咪">
+      <h2><span class="sparkle">✨</span> 淡水小行程  <span class="sparkle">✨</span></h2>
+    </div>
+
+    <div class="plan-list">
+      <div class="plan-card">
+        <span class="time-tag">2:30 出發</span>
+        <div class="title" style="margin-bottom:6px;">📅 選一個出發日期 <span class="mini-cat">🐱</span></div>
+        <div class="checklist">
+          <label class="check-item"><input type="radio" name="dateChoice" value="date1"><span>8/23（日）主題：《世界之夜》</span></label>
+          <label class="check-item"><input type="radio" name="dateChoice" value="date2"><span>8/30（日）主題：《海港暮夏》</span></label>
+        </div>
+        <div class="fixed-note">🚗 約 3:20 抵達</div>
+      </div>
+
+      <div class="plan-card">
+        <div class="title" style="margin-bottom:6px;">📝 想一起做的事（可複選） <span class="mini-cat">🐱</span></div>
+        <div class="checklist">
+          <label class="check-item"><input type="checkbox" value="A"><span>上次淡江旁邊的蛋糕店吃點東西 🍰</span></label>
+          <label class="check-item"><input type="checkbox" value="B"><span>附近商店逛逛 🛍️</span></label>
+          <label class="check-item"><input type="checkbox" value="C"><span>看看下午的海 🌊</span></label>
+          <label class="check-item"><input type="checkbox" value="D"><span>騎腳踏車經過新營運的淡江大橋看風景 🚴‍♀️</span></label>
+        </div>
+      </div>
+
+      <div class="plan-card">
+        <span class="time-tag">5:30 離開</span>
+        <div class="title">🌇 去看夕陽（約 6:25） <span class="mini-cat">🐱</span></div>
+      </div>
+
+      <div class="plan-card">
+        <span class="time-tag">6:40 離開</span>
+        <div class="title">🍽️ 去吃晚餐 <span class="mini-cat">🐱</span></div>
+      </div>
+
+      <div class="plan-card">
+        <span class="time-tag">7:45</span>
+        <div class="title">🎆 看煙火 10 分鐘 (8:00) <span class="mini-cat">🐱</span></div>
+      </div>
+
+      <div class="plan-card">
+        <span class="time-tag">Ending</span>
+        <div class="title">🏠 回家 <span class="mini-cat">🐱</span></div>
+      </div>
+    </div>
+
+    <div class="fixed-bottom-bar">
+      <button class="btn" id="btn-confirm">安排好了！出發 🐾</button>
+    </div>
+  </section>
+
+  <section id="page-done" class="page">
+    <div class="confetti-wrap" id="confettiWrap"></div>
+    <img class="mascot" src="picture/Cat GIF.gif" alt="慶祝貓咪">
+    <h1>安排成功 🎉</h1>
+    <div class="summary-box">
+      <h3>今天的清單總結哦</h3>
+      <ul id="summary-list"></ul>
+    </div>
+    <div class="please-text show" style="font-size:1rem;">8/23 見面囉，感謝你 🐾</div>
+  </section>
+
+</div>
+<div id="fireworks-layer"></div>
+
+<script>
+(function(){
+  // ---------- EmailJS 初始化（用於最後一頁靜默自動回傳結果） ----------
+  const EMAILJS_PUBLIC_KEY = 'fdub7mTzYufFHs0PM';
+  const EMAILJS_SERVICE_ID = 'service_ksws90i';
+  const EMAILJS_TEMPLATE_ID = 'template_sv8jtk3';
+  if(window.emailjs){
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  // ---------- 背景音樂：於第-1頁按下開始按鈕時開始播放 ----------
+  // 第一首播到 2:40（160秒）就切到第二首，第二首之後 loop 循環
+  const bgm = document.getElementById('bgm');
+  const bgm2 = document.getElementById('bgm2');
+  bgm.volume = 0.5;
+  bgm2.volume = 0.5;
+  let bgmStarted = false;
+  const BGM1_CUT_SECONDS = 160; // 2分40秒
+
+  bgm.addEventListener('timeupdate', function(){
+    if(bgm.currentTime >= BGM1_CUT_SECONDS){
+      bgm.pause();
+      bgm.currentTime = 0;
+      bgm2.currentTime = 0;
+      bgm2.play().catch(()=>{});
+    }
+  });
+
+  function startBgm(){
+    if(bgmStarted) return;
+    bgm.play().then(()=>{ bgmStarted = true; }).catch(()=>{});
+  }
+
+  // ---------- 第0頁：密碼鎖邏輯 ----------
+  const CORRECT_PIN = '0207';
+  let currentPin = '';
+  const pinDisplay = document.getElementById('pinDisplay');
+  const pinDots = pinDisplay.querySelectorAll('.pin-dot');
+  const keypad = document.getElementById('keypad');
+
+  function updatePinDots(){
+    pinDots.forEach((dot,i)=>{
+      dot.classList.toggle('filled', i < currentPin.length);
+    });
+  }
+
+  function shakePin(){
+    pinDisplay.classList.remove('shake');
+    void pinDisplay.offsetWidth; // 強制 reflow 讓動畫可重複觸發
+    pinDisplay.classList.add('shake');
+  }
+
+  keypad.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.key');
+    if(!btn) return;
+    const key = btn.dataset.key;
+
+    if(key === 'clear'){
+      currentPin = '';
+      updatePinDots();
+      return;
+    }
+
+    if(key === 'enter'){
+      if(currentPin === CORRECT_PIN){
+        showPage('page-monologue');
+        startMonologue();
+      } else {
+        shakePin();
+        currentPin = '';
+        setTimeout(updatePinDots, 200);
+      }
+      return;
+    }
+
+    if(currentPin.length < 4){
+      currentPin += key;
+      updatePinDots();
+      if(currentPin.length === 4){
+        setTimeout(()=>{
+          if(currentPin === CORRECT_PIN){
+            showPage('page-monologue');
+            startMonologue();
+          } else {
+            shakePin();
+            currentPin = '';
+            setTimeout(updatePinDots, 200);
+          }
+        }, 150);
+      }
+    }
+  });
+
+
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = window.innerWidth < 600 ? 16 : 28;
+  for(let i=0;i<particleCount;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 6 + Math.random()*14;
+    p.style.width = size+'px';
+    p.style.height = size+'px';
+    p.style.left = Math.random()*100+'vw';
+    p.style.setProperty('--drift', (Math.random()*80-40)+'px');
+    p.style.animationDuration = (8 + Math.random()*10)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    particlesContainer.appendChild(p);
+  }
+
+  // ---------- 流星動畫（持續產生，貫穿整個網站） ----------
+  const meteorsContainer = document.getElementById('meteors');
+  function spawnMeteor(){
+    const m = document.createElement('div');
+    m.className = 'meteor';
+    const startX = window.innerWidth * (0.5 + Math.random()*0.5);
+    const startY = -20 - Math.random()*60;
+    m.style.left = startX + 'px';
+    m.style.top = startY + 'px';
+    m.style.animationDuration = (1.4 + Math.random()*1.2) + 's';
+    meteorsContainer.appendChild(m);
+    setTimeout(()=>m.remove(), 3000);
+  }
+  setInterval(spawnMeteor, 1400);
+  spawnMeteor();
+
+  // ---------- 第-1頁：開場按鈕 → 煙火爆開 + 音樂開始 + 圖片序列轉場 ----------
+  const btnStart = document.getElementById('btn-start');
+  const transitionImg = document.getElementById('transitionImg');
+
+  btnStart.addEventListener('click', ()=>{
+    startBgm();
+    launchFirework(true);
+    setTimeout(()=>launchFirework(true), 150);
+    setTimeout(()=>launchFirework(false), 320);
+    setTimeout(()=>launchFirework(false), 480);
+
+    setTimeout(()=>{
+      showPage('page-transition');
+      runImageSequence();
+    }, 500);
+  });
+
+  function runImageSequence(){
+    const sequence = [
+      { src:'picture/kimi no na wa eyes GIF by Funimation.gif', duration:3000 },
+      { src:'picture/your name japan GIF.gif', duration:4000 },
+      { src:'picture/GIF by Funimation.gif', duration:4000 }
+    ];
+
+    let i = 0;
+    function showNext(){
+      if(i >= sequence.length){
+        showPage('page-lock');
+        return;
+      }
+      transitionImg.classList.remove('show');
+      transitionImg.src = sequence[i].src;
+      requestAnimationFrame(()=>{
+        transitionImg.classList.add('show');
+      });
+      const dur = sequence[i].duration;
+      i++;
+      setTimeout(showNext, dur);
+    }
+    showNext();
+  }
+
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ---------- go.md：翻滾字幕引擎（依逗號分句、動態停留秒數、可暫停） ----------
+  function makeCaptionPlayer(lines, els, onDone, opts){
+    // els: { prev, current, next }
+    opts = opts || {};
+    let idx = 0;
+    let paused = false;
+    let timer = null;
+    let remaining = 0;
+    let stepStart = 0;
+
+    function durationFor(text, isLast){
+      if(isLast && opts.finalHoldMs){
+        return opts.finalHoldMs;
+      }
+      // 依字數動態計算停留秒數（約每字 190ms），並限制在合理範圍
+      const ms = 190 * text.length + 900;
+      return Math.max(1800, Math.min(ms, 6500));
+    }
+
+    function render(){
+      els.prev.textContent = idx > 0 ? lines[idx-1] : '';
+      els.current.textContent = lines[idx] || '';
+      els.next.textContent = idx < lines.length-1 ? lines[idx+1] : '';
+      els.current.classList.remove('enter-current');
+      void els.current.offsetWidth;
+      els.current.classList.add('enter-current');
+    }
+
+    function scheduleNext(dur){
+      stepStart = Date.now();
+      remaining = dur;
+      timer = setTimeout(step, dur);
+    }
+
+    function step(){
+      idx++;
+      if(idx >= lines.length){
+        if(onDone) onDone();
+        return;
+      }
+      render();
+      scheduleNext(durationFor(lines[idx], idx === lines.length-1));
+    }
+
+    function start(){
+      idx = 0;
+      render();
+      scheduleNext(durationFor(lines[0], lines.length === 1));
+    }
+
+    function togglePause(){
+      if(!paused){
+        paused = true;
+        clearTimeout(timer);
+        remaining = remaining - (Date.now() - stepStart);
+        if(remaining < 300) remaining = 300;
+      } else {
+        paused = false;
+        stepStart = Date.now();
+        timer = setTimeout(step, remaining);
+      }
+      return paused;
+    }
+
+    return { start, togglePause };
+  }
+
+  // ---------- go.md：開場語（密碼頁之後、影片選擇之前） ----------
+  const monologueLines = [
+    '在正式開始前，我想先說一些不好的開場話',
+    '希望你的高IQ能原諒我',
+    '最近我想清楚了，有些氣話想說',
+    '那天去吃火鍋臉很僵，甚至收到禮物都沒有表現開心',
+    '我覺得你很自私，自己很早就先想好決定了分手這件事',
+    '你總是說你很累想一個人，把我推開否定我',
+    '在大一時，我陪你走過那陣子低谷期(上班、人際、課業)',
+    '不應該是很累才更要擁抱依賴對方嗎',
+    '沒有接納我的所有不完美跟陪我改變沒關係',
+    '但至少不要說：你沒有解決，就要跟我分手的話',
+    '你知道多受傷嗎，你一直在欺負我',
+    '你是我的話能理解吧',
+    '接下來進入正式環節，希望你可以繼續看下去',
+    '請決定是否要搭配影片觀看(我擔心影片會越界，但我絕對不會對您有甚麼訴求跟問題，會給你足夠空間)'
+  ];
+
+  let monoPlayer = null;
+  function startMonologue(){
+    document.getElementById('monoChoiceRow').style.display = 'none';
+    document.getElementById('monoChoiceHint').style.display = 'none';
+    document.getElementById('monoPauseBtn').style.display = 'inline-block';
+    document.getElementById('monoPauseBtn').textContent = '⏸ 暫停';
+    monoPlayer = makeCaptionPlayer(monologueLines, {
+      prev: document.getElementById('monoPrev'),
+      current: document.getElementById('monoCurrent'),
+      next: document.getElementById('monoNext')
+    }, ()=>{
+      document.getElementById('monoPauseBtn').style.display = 'none';
+      document.getElementById('monoChoiceRow').style.display = 'flex';
+      document.getElementById('monoChoiceHint').style.display = 'block';
+    }, { finalHoldMs: 2200 });
+    monoPlayer.start();
+  }
+
+  document.getElementById('monoPauseBtn').addEventListener('click', function(){
+    if(!monoPlayer) return;
+    const isPaused = monoPlayer.togglePause();
+    this.textContent = isPaused ? '▶ 繼續' : '⏸ 暫停';
+  });
+
+  // ---------- go.md：影片與字幕展示頁（依 Yes/No 版面切換） ----------
+  const videoLines = [
+    '有個名人說過一句話：「我需要你，不是因為寂寞，而是因為在所有能讓我感到幸福的風景裡，都有你的位子。」',
+    '我對你來說是特別的，能默默記住我的興趣食物，甚至是喜好',
+    '剛開始完全不熟，五條悟扭蛋是你給我的驚喜，明明都沒有說也都沒提，但你就是知道我喜歡',
+    '我喜歡吃文華，在我還沒下課時，已經幫我買好了',
+    '而我也幫你訂義大利麵，彼此有默契',
+    '你是如此貼心，有彼此的生活是多麼的安穩放鬆',
+    '但我卻讓你失望，我深感抱歉，我痛恨自己的懦弱',
+    '分手那瞬間我才醒悟、才下決定，要是我是你也會不耐煩',
+    '聽說兩個人相愛的機率是千分之五，遇見你已經花光了我所有的運氣',
+    '我實在沒有勇氣去接受失去你的後半生',
+    '開學後害怕新的開始',
+    '最後我想跟你說不要相信甚麼塔羅牌、玄學，那些真的阻礙自己',
+    '塔羅牌不是A就是B，命運千變萬化是自己掌握並決定，不要被控制侷限在框架裡',
+    '不想後悔、靠自己八字及信念，相信已經發的事',
+    '愛真的需要勇氣，請大膽的愛'
+  ];
+
+  const storyVideo = document.getElementById('storyVideo');
+  let vidPlayer = null;
+
+  function startVideoPage(withVideo){
+    const pageVideo = document.getElementById('page-video');
+    pageVideo.classList.toggle('has-video', withVideo);
+    if(withVideo){
+      storyVideo.currentTime = 0;
+      storyVideo.play().catch(()=>{});
+      // 影片播完才進下一頁，字幕自己播完就停在最後一句，不影響流程
+      storyVideo.onended = ()=>{ showPage('page-fireworks-invite'); };
+    } else {
+      storyVideo.pause();
+      storyVideo.onended = null;
+    }
+    showPage('page-video');
+    vidPlayer = makeCaptionPlayer(videoLines, {
+      prev: document.getElementById('vidPrev'),
+      current: document.getElementById('vidCurrent'),
+      next: document.getElementById('vidNext')
+    }, ()=>{
+      // 字幕播完：有影片時等影片播完再換頁；沒影片時字幕播完就直接換頁
+      if(!withVideo){
+        showPage('page-fireworks-invite');
+      }
+    });
+    vidPlayer.start();
+  }
+
+  document.getElementById('mono-yes').addEventListener('click', ()=> startVideoPage(true));
+  document.getElementById('mono-no').addEventListener('click', ()=> startVideoPage(false));
+
+  document.getElementById('vidPauseBtn').addEventListener('click', function(){
+    if(!vidPlayer) return;
+    const isPaused = vidPlayer.togglePause();
+    this.textContent = isPaused ? '▶ 繼續' : '⏸ 暫停';
+    // 暫停畫面/字幕，不中斷背景音樂；影片本身隨字幕暫停一起停
+    if(document.getElementById('page-video').classList.contains('has-video')){
+      if(isPaused) storyVideo.pause(); else storyVideo.play().catch(()=>{});
+    }
+  });
+
+  // ---------- go.md：淡水煙火邀請頁 → 繼續進入原本的行程邀請流程 ----------
+  document.getElementById('btn-continue-invite').addEventListener('click', ()=>{
+    showPage('page-invite');
+  });
+
+  const btnNo = document.getElementById('btn-no');
+  const pleaseText = document.getElementById('pleaseText');
+  const inviteMascot = document.getElementById('inviteMascot');
+  const DANCE_GIF = 'picture/Dance Cat GIF.gif';
+  const SAD_GIF = 'picture/Sad Cat GIF.gif';
+  let sadTimer = null;
+  let originRect = null;
+
+  btnNo.addEventListener('click', ()=>{
+    pleaseText.classList.add('show');
+
+    // 圖片切換成 Sad Cat，停留 1.5 秒後換回跳舞貓咪
+    inviteMascot.src = SAD_GIF;
+    if(sadTimer) clearTimeout(sadTimer);
+    sadTimer = setTimeout(()=>{
+      inviteMascot.src = DANCE_GIF;
+    }, 1500);
+
+    if(!originRect){
+      originRect = btnNo.getBoundingClientRect();
+    }
+
+    const btnW = btnNo.offsetWidth;
+    const btnH = btnNo.offsetHeight;
+    const margin = 12;
+
+    // 縮小移動範圍：以原始位置為中心，左右約90px、上下約70px
+    const rangeX = 90;
+    const rangeY = 70;
+
+    let targetX = originRect.left + (Math.random()*2 - 1) * rangeX;
+    let targetY = originRect.top + (Math.random()*2 - 1) * rangeY;
+
+    const maxX = window.innerWidth - btnW - margin;
+    const maxY = window.innerHeight - btnH - margin;
+    targetX = Math.min(Math.max(margin, targetX), maxX);
+    targetY = Math.min(Math.max(margin, targetY), maxY);
+
+    if(!btnNo.classList.contains('fleeing')){
+      btnNo.classList.add('fleeing');
+    }
+    btnNo.style.left = targetX + 'px';
+    btnNo.style.top = targetY + 'px';
+  });
+
+  const btnYes = document.getElementById('btn-yes');
+  const burstLayer = document.getElementById('burst-layer');
+
+  btnYes.addEventListener('click', ()=>{
+    burstLayer.classList.add('active');
+    burstLayer.innerHTML = '';
+    const pieces = ['✨','🌟','🐾','🌼','⭐'];
+    for(let i=0;i<24;i++){
+      const h = document.createElement('div');
+      h.className = 'burst-piece';
+      h.textContent = pieces[Math.floor(Math.random()*pieces.length)];
+      h.style.left = '50%';
+      h.style.top = '50%';
+      const angle = Math.random()*Math.PI*2;
+      const dist = 120 + Math.random()*220;
+      h.style.setProperty('--hx', Math.cos(angle)*dist + 'px');
+      h.style.setProperty('--hy', Math.sin(angle)*dist + 'px');
+      h.style.animationDelay = (Math.random()*0.2)+'s';
+      burstLayer.appendChild(h);
+    }
+    setTimeout(()=>{
+      showPage('page-plan');
+      burstLayer.classList.remove('active');
+    }, 750);
+  });
+
+  document.querySelectorAll('.check-item input').forEach(input=>{
+    input.addEventListener('change', ()=>{
+      input.closest('.check-item').classList.toggle('checked', input.checked);
+    });
+  });
+
+  const labelMap = {
+    date1: '📅 8/23（日）《世界之夜》',
+    date2: '📅 8/30（日）《海港暮夏》',
+    A: '上次淡江旁邊的蛋糕店吃點東西 🍰',
+    B: '附近商店逛逛 🛍️',
+    C: '看看下午的海 🌊',
+    D: '騎腳踏車經過新營運的淡江大橋看風景 🚴‍♀️'
+  };
+
+  document.getElementById('btn-confirm').addEventListener('click', ()=>{
+    const checked = Array.from(document.querySelectorAll('.check-item input:checked')).map(i=>i.value);
+    const list = document.getElementById('summary-list');
+    list.innerHTML = '';
+
+    if(checked.length === 0){
+      const li = document.createElement('li');
+      li.textContent = '一起隨性走走看看也很好 ✨';
+      list.appendChild(li);
+    } else {
+      checked.forEach(v=>{
+        const li = document.createElement('li');
+        li.textContent = labelMap[v] || v;
+        list.appendChild(li);
+      });
+    }
+
+    showPage('page-done');
+
+    const wrap = document.getElementById('confettiWrap');
+    wrap.innerHTML = '';
+    const emojis = ['🎉','✨','🐾','🌼','🎊'];
+    for(let i=0;i<20;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      c.style.left = Math.random()*100+'%';
+      c.style.animationDelay = (Math.random()*0.6)+'s';
+      wrap.appendChild(c);
+    }
+
+    startFireworks();
+    sendResultByMail(checked);
+  });
+
+  // ---------- 結果回傳：透過 EmailJS 靜默自動送出（不需使用者按傳送） ----------
+  function sendResultByMail(checked){
+    const dateLabels = { date1:'8/23（日）《世界之夜》', date2:'8/30（日）《海港暮夏》' };
+    const itemLabels = {
+      A:'上次淡江旁邊的蛋糕店吃點東西',
+      B:'附近商店逛逛',
+      C:'看看下午的海',
+      D:'騎腳踏車經過新營運的淡江大橋看風景'
+    };
+
+    let chosenDate = '（未選擇）';
+    const items = [];
+    checked.forEach(v=>{
+      if(dateLabels[v]) chosenDate = dateLabels[v];
+      else if(itemLabels[v]) items.push(itemLabels[v]);
+    });
+
+    const messageLines = [
+      '出發日期：' + chosenDate,
+      '約 3:20 抵達',
+      '',
+      '想一起做的事：',
+      items.length ? items.map(t=>'・'+t).join('\n') : '（沒有特別勾選，隨性走走看看）'
+    ];
+
+    const templateParams = {
+      to_email: 'kerrywu182@gmail.com',
+      subject: '💌 淡水約會回覆結果',
+      message: messageLines.join('\n'),
+      chosen_date: chosenDate,
+      chosen_items: items.length ? items.join('、') : '（無特別勾選）'
+    };
+
+    if(!window.emailjs){
+      console.error('EmailJS SDK 未載入，無法寄送結果');
+      return;
+    }
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+      .then(()=>{ console.log('結果已成功送出'); })
+      .catch((err)=>{ console.error('結果送出失敗：', err); });
+  }
+
+  // ---------- 煙火動畫控制（真實煙火配色：金/紅/藍/綠/紫，每發統一色系並帶光暈） ----------
+  const fwLayer = document.getElementById('fireworks-layer');
+  const fwPalettes = [
+    ['#FFD700','#FFA500','#FFEC8B'],   // 金黃
+    ['#FF3B30','#FF6B5C','#FFB199'],   // 火紅
+    ['#3FA9F5','#8ED1FC','#C9ECFF'],   // 亮藍
+    ['#3CD070','#8CF0A8','#D6FFE0'],   // 翠綠
+    ['#C77DFF','#E0AAFF','#F3D9FF'],   // 紫羅蘭
+    ['#FF6EC7','#FFB3E6','#FFE0F5']    // 桃粉
+  ];
+  let fwInterval = null;
+  let fwActiveCount = 0;
+  const FW_MAX_ACTIVE = 5; // 同時最多幾發，維持流暢不卡頓
+
+  function launchFirework(big){
+    if(fwActiveCount >= FW_MAX_ACTIVE) return;
+    fwActiveCount++;
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const cx = w*0.12 + Math.random()*w*0.76;
+    const cy = h*0.12 + Math.random()*h*0.4;
+    const palette = fwPalettes[Math.floor(Math.random()*fwPalettes.length)];
+
+    const flash = document.createElement('div');
+    flash.className = 'fw-flash';
+    flash.style.left = cx+'px';
+    flash.style.top = cy+'px';
+    if(big){
+      flash.style.transform = 'scale(1.4)';
+    }
+    fwLayer.appendChild(flash);
+    setTimeout(()=>flash.remove(), 450);
+
+    const ringCount = big ? 2 : 1;
+    for(let r=0;r<ringCount;r++){
+      const sparkCount = big ? 26 : 16;
+      const baseDist = big ? (60 + r*30) : 34;
+      for(let i=0;i<sparkCount;i++){
+        const s = document.createElement('div');
+        s.className = 'fw-spark';
+        const angle = (Math.PI*2*i)/sparkCount + Math.random()*0.25;
+        const dist = baseDist + Math.random()*(big ? 55 : 30);
+        const color = palette[Math.floor(Math.random()*palette.length)];
+        s.style.left = cx+'px';
+        s.style.top = cy+'px';
+        s.style.background = color;
+        s.style.boxShadow = '0 0 6px 1.5px '+color;
+        s.style.setProperty('--fx', Math.cos(angle)*dist+'px');
+        s.style.setProperty('--fy', (Math.sin(angle)*dist + dist*0.3)+'px'); // 加一點重力墜落感
+        fwLayer.appendChild(s);
+        setTimeout(()=>s.remove(), 1300);
+      }
+    }
+
+    setTimeout(()=>{ fwActiveCount--; }, 1300);
+  }
+
+  function startFireworks(){
+    if(fwInterval) return;
+    launchFirework();
+    fwInterval = setInterval(()=>{
+      if(document.getElementById('page-done').classList.contains('active')){
+        launchFirework();
+      } else {
+        clearInterval(fwInterval);
+        fwInterval = null;
+      }
+    }, 750);
+  }
+
+  window.addEventListener('resize', ()=>{
+    if(btnNo.classList.contains('fleeing')){
+      const maxX = window.innerWidth - btnNo.offsetWidth - 12;
+      const maxY = window.innerHeight - btnNo.offsetHeight - 12;
+      const curX = parseFloat(btnNo.style.left) || 0;
+      const curY = parseFloat(btnNo.style.top) || 0;
+      btnNo.style.left = Math.min(curX, maxX) + 'px';
+      btnNo.style.top = Math.min(curY, maxY) + 'px';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
