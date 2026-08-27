@@ -951,11 +951,18 @@
   function startBgm(){
     if(bgmStarted) return;
     bgm.play().then(()=>{ bgmStarted = true; }).catch(()=>{});
-    // 手機上（尤其 iOS Safari）每個 <audio>/<video> 元素都需要各自被使用者手勢「解鎖」過一次，
+    // 手機上（尤其 iOS Safari／Android）每個 <audio>/<video> 元素都需要各自被使用者手勢「解鎖」過一次，
     // 才允許之後在沒有手勢的情況下（例如 timeupdate、setTimeout）呼叫 play()。
-    // 這裡趁著這次按鈕點擊的手勢，順便把第二首歌跟後面要用的影片都預先播放又立刻暫停，
-    // 讓它們之後都能被程式自動播放，避免「第一首播完卻沒有第二首」的問題。
-    bgm2.play().then(()=>{ bgm2.pause(); bgm2.currentTime = 0; }).catch(()=>{});
+    // 這裡趁著這次按鈕點擊的手勢，把第二首歌跟後面要用的影片都預先播放又立刻暫停來「解鎖」。
+    // 注意：解鎖時必須先靜音再播放，否則同一時間兩個音源搶著出聲，手機會把音訊焦點切給
+    // 第二首，導致第一首「剛開始播放就被中斷」，也就是「第一首音樂也沒了」的成因。
+    const bgm2WasMuted = bgm2.muted;
+    bgm2.muted = true;
+    bgm2.play().then(()=>{
+      bgm2.pause();
+      bgm2.currentTime = 0;
+      bgm2.muted = bgm2WasMuted;
+    }).catch(()=>{ bgm2.muted = bgm2WasMuted; });
     if(typeof primeStoryVideo === 'function') primeStoryVideo();
   }
 
@@ -1238,10 +1245,13 @@
   // 之後即使是在字幕播完（setTimeout）這種沒有手勢的情況下呼叫 play()，也能正常自動播放，
   // 不會再需要使用者自己按暫停/繼續才會動。
   function primeStoryVideo(){
+    const wasMuted = storyVideo.muted;
+    storyVideo.muted = true;
     storyVideo.play().then(()=>{
       storyVideo.pause();
       storyVideo.currentTime = 0;
-    }).catch(()=>{});
+      storyVideo.muted = wasMuted;
+    }).catch(()=>{ storyVideo.muted = wasMuted; });
   }
 
   // ---------- Yes：文字跟影片分開看（先字幕全播完，再單獨播影片） ----------
