@@ -693,13 +693,6 @@
     object-fit:contain;
     background:#000;
   }
-  #page-video.video-only{
-    justify-content:center;
-    align-items:center;
-  }
-  #page-video.video-only #storyVideo{
-    max-height:80vh;
-  }
   #videoCaptionWrap{
     flex:1;
     width:100%;
@@ -803,7 +796,6 @@
       <button class="btn" id="mono-no">No</button>
     </div>
     <p class="bottom-note" id="monoChoiceHint" style="display:none;">影片搭配字幕可以按暫停</p>
-    <p class="bottom-note" id="monoLoadHint" style="display:none;">影片流量大請稍等到影片開始</p>
   </section>
 
   <section id="page-video" class="page">
@@ -1162,7 +1154,7 @@
     '在大一時，我陪你走過那陣子低谷期(上班、人際、課業)',
     '不應該是很累才更要擁抱依賴對方嗎',
     '沒有接納我的所有不完美跟陪我改變沒關係',
-    '但至少不要說：你沒有解決，就要跟我分手的話',
+    '但至少不要說：我沒有解決，就要跟我分手的話',
     '你知道多受傷嗎，你一直在欺負我',
     '你是我的話能理解吧',
     '接下來進入正式環節，希望你可以繼續看下去',
@@ -1173,7 +1165,6 @@
   function startMonologue(){
     document.getElementById('monoChoiceRow').style.display = 'none';
     document.getElementById('monoChoiceHint').style.display = 'none';
-    document.getElementById('monoLoadHint').style.display = 'none';
     document.getElementById('monoPauseBtn').style.display = 'inline-block';
     document.getElementById('monoPauseBtn').textContent = '⏸ 暫停';
     monoPlayer = makeCaptionPlayer(monologueLines, {
@@ -1184,7 +1175,6 @@
       document.getElementById('monoPauseBtn').style.display = 'none';
       document.getElementById('monoChoiceRow').style.display = 'flex';
       document.getElementById('monoChoiceHint').style.display = 'block';
-      document.getElementById('monoLoadHint').style.display = 'block';
     }, { finalHoldMs: 2200 });
     monoPlayer.start();
   }
