@@ -693,6 +693,13 @@
     object-fit:contain;
     background:#000;
   }
+  #page-video.video-only{
+    justify-content:center;
+    align-items:center;
+  }
+  #page-video.video-only #storyVideo{
+    max-height:80vh;
+  }
   #videoCaptionWrap{
     flex:1;
     width:100%;
@@ -796,6 +803,7 @@
       <button class="btn" id="mono-no">No</button>
     </div>
     <p class="bottom-note" id="monoChoiceHint" style="display:none;">影片搭配字幕可以按暫停</p>
+    <p class="bottom-note" id="monoLoadHint" style="display:none;">影片流量大請稍等到影片開始</p>
   </section>
 
   <section id="page-video" class="page">
@@ -1091,8 +1099,8 @@
         return opts.finalHoldMs;
       }
       // 依字數動態計算停留秒數（約每字 190ms），並限制在合理範圍
-      const ms = 190 * text.length + 900;
-      return Math.max(1800, Math.min(ms, 6500));
+      const ms = 150 * text.length + 700;
+      return Math.max(1400, Math.min(ms, 5200));
     }
 
     function render(){
@@ -1154,7 +1162,7 @@
     '在大一時，我陪你走過那陣子低谷期(上班、人際、課業)',
     '不應該是很累才更要擁抱依賴對方嗎',
     '沒有接納我的所有不完美跟陪我改變沒關係',
-    '但至少不要說：我沒有解決，就要跟我分手的話',
+    '但至少不要說：你沒有解決，就要跟我分手的話',
     '你知道多受傷嗎，你一直在欺負我',
     '你是我的話能理解吧',
     '接下來進入正式環節，希望你可以繼續看下去',
@@ -1165,6 +1173,7 @@
   function startMonologue(){
     document.getElementById('monoChoiceRow').style.display = 'none';
     document.getElementById('monoChoiceHint').style.display = 'none';
+    document.getElementById('monoLoadHint').style.display = 'none';
     document.getElementById('monoPauseBtn').style.display = 'inline-block';
     document.getElementById('monoPauseBtn').textContent = '⏸ 暫停';
     monoPlayer = makeCaptionPlayer(monologueLines, {
@@ -1175,6 +1184,7 @@
       document.getElementById('monoPauseBtn').style.display = 'none';
       document.getElementById('monoChoiceRow').style.display = 'flex';
       document.getElementById('monoChoiceHint').style.display = 'block';
+      document.getElementById('monoLoadHint').style.display = 'block';
     }, { finalHoldMs: 2200 });
     monoPlayer.start();
   }
@@ -1195,8 +1205,6 @@
     '你是如此貼心，有彼此的生活是多麼的安穩放鬆',
     '但我卻讓你失望，我深感抱歉，我痛恨自己的懦弱',
     '分手那瞬間我才醒悟、才下決定，要是我是你也會不耐煩',
-    '如果之後最終不如願，我也釋懷了，畢竟世事難求',
-    '我做的這些，至少不會後悔了，因為我努力了',
     '聽說兩個人相愛的機率是千分之五，遇見你已經花光了我所有的運氣',
     '我實在沒有勇氣去接受失去你的後半生',
     '開學後害怕新的開始',

@@ -693,11 +693,19 @@
     object-fit:contain;
     background:#000;
   }
+  /* 純影片模式：整頁改成置中容器，影片本身完全垂直+水平置中在畫面正中央 */
   #page-video.video-only{
-    justify-content:center;
+    display:flex;
+    flex-direction:column;
     align-items:center;
+    justify-content:center;
+    height:100%;
   }
   #page-video.video-only #storyVideo{
+    display:block;
+    margin:auto;
+    width:auto;
+    max-width:100%;
     max-height:80vh;
   }
   #videoCaptionWrap{
@@ -943,6 +951,12 @@
   function startBgm(){
     if(bgmStarted) return;
     bgm.play().then(()=>{ bgmStarted = true; }).catch(()=>{});
+    // 手機上（尤其 iOS Safari）每個 <audio>/<video> 元素都需要各自被使用者手勢「解鎖」過一次，
+    // 才允許之後在沒有手勢的情況下（例如 timeupdate、setTimeout）呼叫 play()。
+    // 這裡趁著這次按鈕點擊的手勢，順便把第二首歌跟後面要用的影片都預先播放又立刻暫停，
+    // 讓它們之後都能被程式自動播放，避免「第一首播完卻沒有第二首」的問題。
+    bgm2.play().then(()=>{ bgm2.pause(); bgm2.currentTime = 0; }).catch(()=>{});
+    if(typeof primeStoryVideo === 'function') primeStoryVideo();
   }
 
   // ---------- 第0頁：密碼鎖邏輯 ----------
@@ -1098,9 +1112,9 @@
       if(isLast && opts.finalHoldMs){
         return opts.finalHoldMs;
       }
-      // 依字數動態計算停留秒數（約每字 190ms），並限制在合理範圍
-      const ms = 150 * text.length + 700;
-      return Math.max(1400, Math.min(ms, 5200));
+      // 依字數動態計算停留秒數，並限制在合理範圍（比上一版再快一點點）
+      const ms = 135 * text.length + 600;
+      return Math.max(1250, Math.min(ms, 4700));
     }
 
     function render(){
@@ -1205,12 +1219,14 @@
     '你是如此貼心，有彼此的生活是多麼的安穩放鬆',
     '但我卻讓你失望，我深感抱歉，我痛恨自己的懦弱',
     '分手那瞬間我才醒悟、才下決定，要是我是你也會不耐煩',
+    '如果之後最終不如願，我也釋懷了，畢竟世事難求',
+    '我做的這些，至少不會後悔了，因為我努力了',
     '聽說兩個人相愛的機率是千分之五，遇見你已經花光了我所有的運氣',
     '我實在沒有勇氣去接受失去你的後半生',
     '開學後害怕新的開始',
     '最後我想跟你說不要相信甚麼塔羅牌、玄學，那些真的阻礙自己',
     '塔羅牌不是A就是B，命運千變萬化是自己掌握並決定，不要被控制侷限在框架裡',
-    '不想後悔、靠自己八字及信念，相信已經發的事',
+    '不想後悔、靠自己八字及信念，相信已經發生的事',
     '愛真的需要勇氣，請大膽的愛'
   ];
 
@@ -1218,8 +1234,19 @@
   let vidPlayer = null;
   const rewatchBtn = document.getElementById('btn-rewatch-video');
 
+  // 預先「解鎖」影片元素：在使用者手勢中播放又立刻暫停一次，
+  // 之後即使是在字幕播完（setTimeout）這種沒有手勢的情況下呼叫 play()，也能正常自動播放，
+  // 不會再需要使用者自己按暫停/繼續才會動。
+  function primeStoryVideo(){
+    storyVideo.play().then(()=>{
+      storyVideo.pause();
+      storyVideo.currentTime = 0;
+    }).catch(()=>{});
+  }
+
   // ---------- Yes：文字跟影片分開看（先字幕全播完，再單獨播影片） ----------
   function startSeparateFlow(){
+    primeStoryVideo();
     const pageVideo = document.getElementById('page-video');
     pageVideo.classList.remove('has-video');
     pageVideo.classList.remove('video-only');
@@ -1249,6 +1276,7 @@
 
   // ---------- No：文字跟影片一起播（影片播完才換頁） ----------
   function startTogetherFlow(){
+    primeStoryVideo();
     const pageVideo = document.getElementById('page-video');
     pageVideo.classList.add('has-video');
     pageVideo.classList.remove('video-only');
