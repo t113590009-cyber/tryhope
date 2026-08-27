@@ -1099,8 +1099,8 @@
         return opts.finalHoldMs;
       }
       // 依字數動態計算停留秒數（約每字 190ms），並限制在合理範圍
-      const ms = 190 * text.length + 900;
-      return Math.max(1800, Math.min(ms, 6500));
+      const ms = 150 * text.length + 700;
+      return Math.max(1400, Math.min(ms, 5200));
     }
 
     function render(){
