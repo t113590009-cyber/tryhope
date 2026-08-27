@@ -937,25 +937,25 @@
   bgm.volume = 0.5;
   bgm2.volume = 0.5;
   let bgmStarted = false;
-  const BGM1_CUT_SECONDS = 160; // 2分40秒
 
-  bgm.addEventListener('timeupdate', function(){
-    if(bgm.currentTime >= BGM1_CUT_SECONDS){
-      bgm.pause();
-      bgm.currentTime = 0;
-      bgm2.currentTime = 0;
-      bgm2.play().catch(()=>{});
-    }
+  // 第一首自然播完（ended）就接第二首，第二首本身有 loop 屬性會一直播下去，
+  // 不做任何中途暫停／截斷，邏輯越簡單，手機上越不容易出包。
+  let currentBGM = bgm;
+  bgm.addEventListener('ended', function(){
+    currentBGM = bgm2;
+    bgm2.currentTime = 0;
+    bgm2.play().catch(()=>{});
   });
 
   function startBgm(){
     if(bgmStarted) return;
-    bgm.play().then(()=>{ bgmStarted = true; }).catch(()=>{});
+    bgmStarted = true;
+    bgm.play().catch(()=>{});
     // 手機上（尤其 iOS Safari／Android）每個 <audio>/<video> 元素都需要各自被使用者手勢「解鎖」過一次，
-    // 才允許之後在沒有手勢的情況下（例如 timeupdate、setTimeout）呼叫 play()。
+    // 才允許之後在沒有手勢的情況下（例如 ended 事件）呼叫 play()。
     // 這裡趁著這次按鈕點擊的手勢，把第二首歌跟後面要用的影片都預先播放又立刻暫停來「解鎖」。
     // 注意：解鎖時必須先靜音再播放，否則同一時間兩個音源搶著出聲，手機會把音訊焦點切給
-    // 第二首，導致第一首「剛開始播放就被中斷」，也就是「第一首音樂也沒了」的成因。
+    // 第二首，導致第一首「剛開始播放就被中斷」，也就是「兩首同時播放／第一首放不出來」的成因。
     const bgm2WasMuted = bgm2.muted;
     bgm2.muted = true;
     bgm2.play().then(()=>{
@@ -1240,6 +1240,17 @@
   const storyVideo = document.getElementById('storyVideo');
   let vidPlayer = null;
   const rewatchBtn = document.getElementById('btn-rewatch-video');
+
+  // 防護機制：部分手機（尤其 iOS）在播放帶有聲音的 <video> 時，
+  // 會把系統音訊焦點搶走、順手把背景音樂暫停掉。這裡持續檢查，
+  // 一旦發現「目前該播的那首」被系統偷偷暫停，就自動接回來繼續播。
+  function ensureBGMPlaying(){
+    if(currentBGM && currentBGM.paused && bgmStarted){
+      currentBGM.play().catch(()=>{});
+    }
+  }
+  storyVideo.addEventListener('play', ensureBGMPlaying);
+  storyVideo.addEventListener('timeupdate', ensureBGMPlaying);
 
   // 預先「解鎖」影片元素：在使用者手勢中播放又立刻暫停一次，
   // 之後即使是在字幕播完（setTimeout）這種沒有手勢的情況下呼叫 play()，也能正常自動播放，
@@ -1589,33 +1600,6 @@ function playVideoOnly(){
     }
   });
 })();
-
-// ===== 獨立背景音樂管理（播完第一首接第二首，完全不受影片干擾） =====
-  const bgm1 = document.getElementById('bgm1'); 
-  const bgm2 = document.getElementById('bgm2'); 
-
-  // 追蹤當前應該播放的音樂（預設第一首）
-  let currentBGM = bgm1;
-
-  if (bgm1 && bgm2) {
-    // 1. 第一首播完時，自動把指標換成第二首並播放
-    bgm1.addEventListener('ended', function() {
-      currentBGM = bgm2;
-      bgm2.currentTime = 0;
-      bgm2.play().catch(()=>{});
-    });
-  }
-
-  // 2. 防護機制：防止 iOS 系統在影片播放時偷偷把音樂 pause 掉
-  function ensureBGMPlaying() {
-    if (currentBGM && currentBGM.paused) {
-      currentBGM.play().catch(()=>{});
-    }
-  }
-
-  // 只要影片在播，就持續確保背景音樂沒有被手機系統切斷
-  storyVideo.addEventListener('play', ensureBGMPlaying);
-  storyVideo.addEventListener('timeupdate', ensureBGMPlaying);
 
 </script>
 </body>
