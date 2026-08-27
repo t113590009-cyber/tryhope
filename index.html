@@ -1589,7 +1589,19 @@ function playVideoOnly(){
     }
   });
 })();
-</script>
 
+// ===== 兩段音樂串接管理 =====
+  const bgm1 = document.getElementById('bgm1'); // ⚠️ 請替換為您第一段音樂的 ID
+  const bgm2 = document.getElementById('bgm2'); // ⚠️ 請替換為您第二段音樂的 ID
+
+  if (bgm1 && bgm2) {
+    // 當第一段音樂播完時，自動無縫接續播放第二段
+    bgm1.addEventListener('ended', function() {
+      bgm2.currentTime = 0;
+      bgm2.play().catch(()=>{});
+    });
+  }
+  
+</script>
 </body>
 </html>
