@@ -6,14 +6,12 @@
 <title>Will you hang out with me? 🌸</title>
 <style>
   :root{
-    --bg-a:#0F1226;
-    --bg-b:#1B1030;
+    --bg-a:#FFF6E9;
+    --bg-b:#FDF9F3;
     --accent:#F5A15E;
-    --accent-soft:#FFC98A;
-    --mint:#7FD8C4;
-    --text-dark:#F3E7D9;
-    --card-bg:#221A3B;
-    --card-border:#3A2C5C;
+    --accent-soft:#FFD9A8;
+    --mint:#BFE3D0;
+    --text-dark:#6b5548;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{
@@ -22,64 +20,9 @@
   }
   body{
     font-family:'Helvetica Neue',"PingFang TC","Microsoft JhengHei",sans-serif;
-    background:radial-gradient(ellipse at 30% 10%, #241a42 0%, var(--bg-a) 45%, var(--bg-b) 100%);
+    background:linear-gradient(160deg,var(--bg-a),var(--bg-b));
     color:var(--text-dark);
     position:relative;
-  }
-
-  /* ---------- 流星（史詩感火球隕石：珍珠白核心 + 火焰/煙霧/電光綠電漿尾，帶分裂殘片） ---------- */
-  #meteors{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    overflow:hidden;
-    z-index:0;
-  }
-  .meteor{
-    position:absolute;
-    width:260px;
-    height:5px;
-    background:linear-gradient(90deg,
-      rgba(120,255,170,0) 0%,
-      rgba(120,255,170,0.35) 18%,
-      rgba(255,140,60,0.55) 42%,
-      rgba(255,210,140,0.8) 65%,
-      #FFF9EC 88%,
-      #FFFFFF 100%);
-    border-radius:999px;
-    filter:drop-shadow(0 0 10px rgba(255,180,110,0.65)) drop-shadow(0 0 16px rgba(120,255,170,0.35));
-    animation:meteorFly linear forwards;
-    opacity:0;
-  }
-  .meteor::before{
-    /* 分裂殘片：主體尾端裂出的小火焰碎片 */
-    content:'';
-    position:absolute;
-    left:35%;
-    top:-6px;
-    width:60px;
-    height:2px;
-    background:linear-gradient(90deg, rgba(140,255,180,0) 0%, rgba(140,255,180,0.6) 50%, rgba(255,255,255,0.8) 100%);
-    border-radius:999px;
-    transform:rotate(14deg);
-    filter:blur(0.4px);
-  }
-  .meteor::after{
-    content:'';
-    position:absolute;
-    right:-5px;
-    top:-6px;
-    width:16px;
-    height:16px;
-    border-radius:50%;
-    background:radial-gradient(circle, #FFFFFF 0%, #FFE9C8 40%, rgba(255,170,90,0.5) 70%, rgba(120,255,170,0.2) 100%);
-    box-shadow:0 0 20px 6px rgba(255,220,180,0.85), 0 0 34px 10px rgba(120,255,170,0.3);
-  }
-  @keyframes meteorFly{
-    0%{ transform:translate(0,0) rotate(-34deg) scale(0.85); opacity:0; }
-    6%{ opacity:1; }
-    50%{ opacity:0.95; }
-    100%{ transform:translate(-820px,600px) rotate(-34deg) scale(0.6); opacity:0; }
   }
 
   #particles{
@@ -93,13 +36,12 @@
     position:absolute;
     bottom:-40px;
     border-radius:50%;
-    background:rgba(245,161,94,0.35);
-    box-shadow:0 0 6px 1px rgba(245,161,94,0.3);
+    background:rgba(245,161,94,0.3);
     animation:floatUp linear infinite;
   }
   @keyframes floatUp{
     0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
-    10%{ opacity:0.9; }
+    10%{ opacity:0.8; }
     90%{ opacity:0.6; }
     100%{ transform:translateY(-110vh) translateX(var(--drift,20px)) rotate(360deg); opacity:0; }
   }
@@ -154,32 +96,6 @@
     pointer-events:none;
   }
 
-  /* ================= 第-1頁：開場按鈕 ================= */
-  #page-start{
-    justify-content:center;
-    align-items:center;
-  }
-
-  /* ================= 圖片轉場頁 ================= */
-  #page-transition{
-    justify-content:center;
-    align-items:center;
-    background:#000;
-  }
-  .transition-img{
-    width:100%;
-    max-width:520px;
-    max-height:50vh;
-    object-fit:contain;
-    border-radius:18px;
-    box-shadow:0 0 40px rgba(245,161,94,0.35);
-    opacity:0;
-    transition:opacity .4s ease;
-  }
-  .transition-img.show{
-    opacity:1;
-  }
-
   /* ================= 第0頁：密碼鎖 ================= */
   #page-lock{
     justify-content:center;
@@ -215,7 +131,7 @@
     height:16px;
     border-radius:50%;
     border:2px solid var(--accent-soft);
-    background:var(--card-bg);
+    background:#fff;
     transition:background .15s ease, transform .15s ease;
   }
   .pin-dot.filled{
@@ -243,7 +159,7 @@
     height:64px;
     border-radius:50%;
     border:none;
-    background:var(--card-bg);
+    background:#fff;
     color:var(--text-dark);
     font-size:1.3rem;
     font-weight:700;
@@ -274,7 +190,7 @@
     color:var(--accent);
     font-weight:800;
     line-height:1.4;
-    text-shadow:0 0 18px rgba(245,161,94,0.5);
+    text-shadow:0 2px 0 #fff;
     max-width:560px;
   }
   .btn-row{
@@ -304,7 +220,7 @@
   }
   #btn-yes:hover{ transform:translateY(-3px) scale(1.03); }
   #btn-no{
-    background:var(--card-bg);
+    background:#fff;
     color:var(--accent);
     border:2px solid var(--accent-soft);
     position:relative;
@@ -374,11 +290,11 @@
     gap:12px;
   }
   .plan-card{
-    background:var(--card-bg);
+    background:#fff;
     border-radius:20px;
     padding:16px 20px;
     box-shadow:0 4px 14px rgba(245,161,94,0.15);
-    border:1.5px solid var(--card-border);
+    border:1.5px solid #FFE9CC;
     opacity:0;
     transform:translateY(14px);
     animation:cardIn .5s ease forwards;
@@ -454,8 +370,7 @@
     display:flex;
     align-items:center;
     gap:10px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
+    background:var(--bg-a);
     border-radius:14px;
     padding:10px 14px;
     cursor:pointer;
@@ -469,8 +384,7 @@
     cursor:pointer;
   }
   .check-item.checked{
-    background:rgba(127,216,196,0.22);
-    border-color:var(--mint);
+    background:var(--mint);
   }
   .fixed-bottom-bar{
     position:fixed;
@@ -498,7 +412,7 @@
     color:var(--accent);
   }
   .summary-box{
-    background:var(--card-bg);
+    background:#fff;
     border-radius:20px;
     padding:20px 24px;
     max-width:480px;
@@ -562,7 +476,7 @@
     width:8px;
     height:8px;
     border-radius:50%;
-    background:var(--card-bg);
+    background:#fff;
     box-shadow:0 0 18px 6px rgba(255,255,255,0.8);
     animation:fwFlash .35s ease-out forwards;
   }
@@ -571,191 +485,19 @@
     100%{ transform:scale(6); opacity:0; }
   }
 
-  /* ================= go.md 新增：開場頁提示與圖片 ================= */
-  .start-hint{
-    font-size:0.85rem;
-    color:var(--text-dark);
-    opacity:0.75;
-    margin-bottom:10px;
-    text-align:center;
-    max-width:280px;
-  }
-  .start-cuddle-img{
-    width:clamp(110px,28vw,170px);
-    height:auto;
-    border-radius:18px;
-    margin-bottom:16px;
-    filter:drop-shadow(0 6px 10px rgba(245,161,94,0.25));
-    animation:bob 2.4s ease-in-out infinite;
-  }
-
-  .bottom-note{
-    font-size:0.8rem;
-    color:var(--text-dark);
-    opacity:0.65;
-    text-align:center;
-    max-width:420px;
-    margin-top:4px;
-    line-height:1.5;
-  }
-
-  /* ================= go.md 新增：翻滾字幕（3D Roll） ================= */
-  .caption-page{
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    gap:22px;
-  }
-  .caption-stage{
-    perspective:900px;
-    width:100%;
-    max-width:640px;
-    height:clamp(150px,30vh,220px);
-    position:relative;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-  }
-  .caption-line{
-    position:absolute;
-    left:0; right:0;
-    padding:0 clamp(16px,4vw,10px);
-    transition:transform .5s cubic-bezier(.4,.1,.2,1), opacity .5s ease;
-    transform-style:preserve-3d;
-  }
-  .caption-line.current{
-    position:relative;
-    font-size:clamp(1.05rem,3.6vw,1.55rem);
-    font-weight:800;
-    color:#FFFFFF;
-    text-shadow:0 0 16px rgba(245,161,94,0.35);
-    opacity:1;
-    transform:translateY(0) rotateX(0deg);
-    line-height:1.6;
-  }
-  .caption-line.prev{
-    top:calc(50% - 66px);
-    opacity:0.28;
-    transform:translateY(0) rotateX(35deg);
-    font-size:clamp(0.85rem,2.6vw,1.05rem);
-    color:var(--text-dark);
-  }
-  .caption-line.next{
-    top:calc(50% + 66px);
-    opacity:0.28;
-    transform:translateY(0) rotateX(-35deg);
-    font-size:clamp(0.85rem,2.6vw,1.05rem);
-    color:var(--text-dark);
-  }
-  .caption-line.enter-current{
-    animation:rollIn .5s cubic-bezier(.4,.1,.2,1);
-  }
-  @keyframes rollIn{
-    0%{ opacity:0.2; transform:translateY(30px) rotateX(35deg); }
-    100%{ opacity:1; transform:translateY(0) rotateX(0deg); }
-  }
-  .btn-pause{
-    border:2px solid var(--accent-soft);
-    background:var(--card-bg);
-    color:var(--accent);
-    padding:9px 22px;
-    border-radius:999px;
-    font-size:0.9rem;
-    font-weight:700;
-    cursor:pointer;
-    transition:transform .12s ease;
-  }
-  .btn-pause:active{ transform:scale(0.94); }
-  .btn-pause.floating{
-    position:fixed;
-    bottom:calc(18px + env(safe-area-inset-bottom));
-    left:50%;
-    transform:translateX(-50%);
-    z-index:15;
-    background:rgba(34,26,59,0.85);
-    backdrop-filter:blur(4px);
-  }
-
-  /* ================= go.md 新增：影片＋字幕頁 ================= */
-  #page-video{
-    padding:0;
-    justify-content:flex-start;
-  }
-  #storyVideo{
-    display:none;
-  }
-  #page-video.has-video #storyVideo{
-    display:block;
-    width:100%;
-    max-height:50vh;
-    aspect-ratio:16/9;
-    object-fit:contain;
-    background:#000;
-  }
-  #videoCaptionWrap{
-    flex:1;
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:clamp(16px,4vw,40px);
-    padding-bottom:90px;
-  }
-  #page-video.video-only #videoCaptionWrap{
-    display:none;
-  }
-
-  /* ================= go.md 新增：淡水煙火邀請頁 ================= */
-  #page-fireworks-invite{
-    justify-content:center;
-    text-align:center;
-    gap:20px;
-  }
-  .firework-invite-box{
-    background:var(--card-bg);
-    border:1.5px solid var(--card-border);
-    border-radius:22px;
-    padding:26px clamp(18px,5vw,32px);
-    max-width:560px;
-    width:100%;
-    box-shadow:0 4px 14px rgba(245,161,94,0.15);
-    text-align:left;
-  }
-  .firework-invite-box p{
-    font-size:0.98rem;
-    line-height:1.9;
-    margin-bottom:12px;
-    color:var(--text-dark);
-  }
-  .firework-invite-box p:last-child{ margin-bottom:0; }
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
 <div class="credit">巫顯辰作者 親自製作 請勿抄襲</div>
-<audio id="bgm" src="music/Kimi no Na wa - Sparkle_default.mp3" preload="auto"></audio>
-<audio id="bgm2" src="music/Benson_Boone_-_In_The_Stars_(mp3.pm).mp3" loop preload="auto"></audio>
-<div id="meteors"></div>
+<audio id="bgm" src="music/Kimi no Na wa - Sparkle_default.mp3" loop preload="auto"></audio>
 <div id="particles"></div>
 <div id="burst-layer"></div>
 
 <div class="app">
 
-  <section id="page-start" class="page active">
-    <img class="start-cuddle-img" src="picture/cuddles GIF.gif" alt="cuddles">
-    <div class="start-hint">請麻煩仔細看每個細節，感謝您唷</div>
-    <button class="btn" id="btn-start" style="padding:22px 50px; font-size:clamp(1.1rem,3.5vw,1.4rem);"> 點我開始哦 </button>
-    <div class="lock-hint" style="margin-top:14px;">🔊 按下開始後會有音樂，請開大手機音量</div>
-  </section>
-
-  <section id="page-transition" class="page">
-    <img id="transitionImg" class="transition-img" src="" alt="">
-  </section>
-
-  <section id="page-lock" class="page">
+  <section id="page-lock" class="page active">
     <div class="lock-mascots">
       <img src="picture/GIF by bluesbear.gif" alt="可愛動圖1">
       <img src="picture/Cute Cat GIF.gif" alt="可愛貓咪">
@@ -782,43 +524,7 @@
       <button class="key wide" data-key="enter">確認</button>
     </div>
     <div class="lock-hint">提示：生日 💭</div>
-  </section>
-
-  <section id="page-monologue" class="page caption-page">
-    <div class="caption-stage" id="monoStage">
-      <div class="caption-line prev" id="monoPrev"></div>
-      <div class="caption-line current" id="monoCurrent"></div>
-      <div class="caption-line next" id="monoNext"></div>
-    </div>
-    <button class="btn-pause" id="monoPauseBtn">⏸ 暫停</button>
-    <div class="btn-row" id="monoChoiceRow" style="display:none;">
-      <button class="btn" id="mono-yes">Yes</button>
-      <button class="btn" id="mono-no">No</button>
-    </div>
-    <p class="bottom-note" id="monoChoiceHint" style="display:none;">影片搭配字幕可以按暫停</p>
-  </section>
-
-  <section id="page-video" class="page">
-    <video id="storyVideo" src="video/v.mp4" playsinline preload="auto"></video>
-    <div id="videoCaptionWrap">
-      <div class="caption-stage" id="vidStage">
-        <div class="caption-line prev" id="vidPrev"></div>
-        <div class="caption-line current" id="vidCurrent"></div>
-        <div class="caption-line next" id="vidNext"></div>
-      </div>
-    </div>
-    <button class="btn-pause floating" id="vidPauseBtn">⏸ 暫停</button>
-  </section>
-
-  <section id="page-fireworks-invite" class="page">
-    <div class="firework-invite-box">
-      <p>其實之前我有計劃一起去淡水看煙火，只是沒想到最後我讓你失望透頂了。</p>
-      <p>我想問問你，你願意陪我一起去看煙火嗎？</p>
-      <p>你真的不用有任何壓力，我什麼都不會做，也不會要求你什麼。就安安靜靜地一起看場煙火就好。看完之後，如果你願意，也讓我陪你回家。</p>
-      <p>就當作是我這個朋友，想完成的一個小小心願。</p>
-    </div>
-    <button class="btn" id="btn-continue-invite">繼續 🎆</button>
-    <button class="btn" id="btn-rewatch-video" style="display:none; margin-top:10px; background:transparent; border:2px solid var(--accent-soft); color:var(--accent);">🔁 重新觀看影片</button>
+    <div class="lock-hint">輸入密碼第一位後可開啟音樂 🎵</div>
   </section>
 
   <section id="page-invite" class="page">
@@ -891,6 +597,7 @@
   </section>
 
   <section id="page-done" class="page">
+    <div id="fireworks-layer"></div>
     <div class="confetti-wrap" id="confettiWrap"></div>
     <img class="mascot" src="picture/Cat GIF.gif" alt="慶祝貓咪">
     <h1>安排成功 🎉</h1>
@@ -902,7 +609,6 @@
   </section>
 
 </div>
-<div id="fireworks-layer"></div>
 
 <script>
 (function(){
@@ -914,23 +620,10 @@
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
 
-  // ---------- 背景音樂：於第-1頁按下開始按鈕時開始播放 ----------
-  // 第一首播到 2:40（160秒）就切到第二首，第二首之後 loop 循環
+  // ---------- 背景音樂：於第0頁密碼正確時開始播放 ----------
   const bgm = document.getElementById('bgm');
-  const bgm2 = document.getElementById('bgm2');
   bgm.volume = 0.5;
-  bgm2.volume = 0.5;
   let bgmStarted = false;
-  const BGM1_CUT_SECONDS = 160; // 2分40秒
-
-  bgm.addEventListener('timeupdate', function(){
-    if(bgm.currentTime >= BGM1_CUT_SECONDS){
-      bgm.pause();
-      bgm.currentTime = 0;
-      bgm2.currentTime = 0;
-      bgm2.play().catch(()=>{});
-    }
-  });
 
   function startBgm(){
     if(bgmStarted) return;
@@ -969,8 +662,8 @@
 
     if(key === 'enter'){
       if(currentPin === CORRECT_PIN){
-        showPage('page-monologue');
-        startMonologue();
+        startBgm();
+        showPage('page-invite');
       } else {
         shakePin();
         currentPin = '';
@@ -982,11 +675,14 @@
     if(currentPin.length < 4){
       currentPin += key;
       updatePinDots();
+      if(currentPin.length === 1){
+        startBgm(); // 輸入第一位數字即開啟音樂（利用此次點擊作為使用者互動手勢）
+      }
       if(currentPin.length === 4){
         setTimeout(()=>{
           if(currentPin === CORRECT_PIN){
-            showPage('page-monologue');
-            startMonologue();
+            startBgm();
+            showPage('page-invite');
           } else {
             shakePin();
             currentPin = '';
@@ -1013,274 +709,10 @@
     particlesContainer.appendChild(p);
   }
 
-  // ---------- 流星動畫（持續產生，貫穿整個網站） ----------
-  const meteorsContainer = document.getElementById('meteors');
-  function spawnMeteor(){
-    const m = document.createElement('div');
-    m.className = 'meteor';
-    const startX = window.innerWidth * (0.5 + Math.random()*0.5);
-    const startY = -20 - Math.random()*60;
-    m.style.left = startX + 'px';
-    m.style.top = startY + 'px';
-    m.style.animationDuration = (1.4 + Math.random()*1.2) + 's';
-    meteorsContainer.appendChild(m);
-    setTimeout(()=>m.remove(), 3000);
-  }
-  setInterval(spawnMeteor, 1400);
-  spawnMeteor();
-
-  // ---------- 第-1頁：開場按鈕 → 煙火爆開 + 音樂開始 + 圖片序列轉場 ----------
-  const btnStart = document.getElementById('btn-start');
-  const transitionImg = document.getElementById('transitionImg');
-
-  btnStart.addEventListener('click', ()=>{
-    startBgm();
-    launchFirework(true);
-    setTimeout(()=>launchFirework(true), 150);
-    setTimeout(()=>launchFirework(false), 320);
-    setTimeout(()=>launchFirework(false), 480);
-
-    setTimeout(()=>{
-      showPage('page-transition');
-      runImageSequence();
-    }, 500);
-  });
-
-  function runImageSequence(){
-    const sequence = [
-      { src:'picture/kimi no na wa eyes GIF by Funimation.gif', duration:3000 },
-      { src:'picture/your name japan GIF.gif', duration:4000 },
-      { src:'picture/GIF by Funimation.gif', duration:4000 }
-    ];
-
-    let i = 0;
-    function showNext(){
-      if(i >= sequence.length){
-        showPage('page-lock');
-        return;
-      }
-      transitionImg.classList.remove('show');
-      transitionImg.src = sequence[i].src;
-      requestAnimationFrame(()=>{
-        transitionImg.classList.add('show');
-      });
-      const dur = sequence[i].duration;
-      i++;
-      setTimeout(showNext, dur);
-    }
-    showNext();
-  }
-
   function showPage(id){
     document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
     document.getElementById(id).classList.add('active');
   }
-
-  // ---------- go.md：翻滾字幕引擎（依逗號分句、動態停留秒數、可暫停） ----------
-  function makeCaptionPlayer(lines, els, onDone, opts){
-    // els: { prev, current, next }
-    opts = opts || {};
-    let idx = 0;
-    let paused = false;
-    let timer = null;
-    let remaining = 0;
-    let stepStart = 0;
-
-    function durationFor(text, isLast){
-      if(isLast && opts.finalHoldMs){
-        return opts.finalHoldMs;
-      }
-      // 依字數動態計算停留秒數（約每字 190ms），並限制在合理範圍
-      const ms = 190 * text.length + 900;
-      return Math.max(1800, Math.min(ms, 6500));
-    }
-
-    function render(){
-      els.prev.textContent = idx > 0 ? lines[idx-1] : '';
-      els.current.textContent = lines[idx] || '';
-      els.next.textContent = idx < lines.length-1 ? lines[idx+1] : '';
-      els.current.classList.remove('enter-current');
-      void els.current.offsetWidth;
-      els.current.classList.add('enter-current');
-    }
-
-    function scheduleNext(dur){
-      stepStart = Date.now();
-      remaining = dur;
-      timer = setTimeout(step, dur);
-    }
-
-    function step(){
-      idx++;
-      if(idx >= lines.length){
-        if(onDone) onDone();
-        return;
-      }
-      render();
-      scheduleNext(durationFor(lines[idx], idx === lines.length-1));
-    }
-
-    function start(){
-      idx = 0;
-      render();
-      scheduleNext(durationFor(lines[0], lines.length === 1));
-    }
-
-    function togglePause(){
-      if(!paused){
-        paused = true;
-        clearTimeout(timer);
-        remaining = remaining - (Date.now() - stepStart);
-        if(remaining < 300) remaining = 300;
-      } else {
-        paused = false;
-        stepStart = Date.now();
-        timer = setTimeout(step, remaining);
-      }
-      return paused;
-    }
-
-    return { start, togglePause };
-  }
-
-  // ---------- go.md：開場語（密碼頁之後、影片選擇之前） ----------
-  const monologueLines = [
-    '在正式開始前，我想先說一些不好的開場話',
-    '希望你的高IQ能原諒我',
-    '最近我想清楚了，有些氣話想說',
-    '那天去吃火鍋臉很僵，甚至收到禮物都沒有表現開心',
-    '我覺得你很自私，自己很早就先想好決定了分手這件事',
-    '你總是說你很累想一個人，把我推開否定我',
-    '在大一時，我陪你走過那陣子低谷期(上班、人際、課業)',
-    '不應該是很累才更要擁抱依賴對方嗎',
-    '沒有接納我的所有不完美跟陪我改變沒關係',
-    '但至少不要說：我沒有解決，就要跟我分手的話',
-    '你知道多受傷嗎，你一直在欺負我',
-    '你是我的話能理解吧',
-    '接下來進入正式環節，希望你可以繼續看下去',
-    '我擔心影片會越界，但我絕對不會對您有甚麼訴求跟問題，會給你足夠空間，請決定是否文字跟影片要分開看(Yes)，還是一起看(No)'
-  ];
-
-  let monoPlayer = null;
-  function startMonologue(){
-    document.getElementById('monoChoiceRow').style.display = 'none';
-    document.getElementById('monoChoiceHint').style.display = 'none';
-    document.getElementById('monoPauseBtn').style.display = 'inline-block';
-    document.getElementById('monoPauseBtn').textContent = '⏸ 暫停';
-    monoPlayer = makeCaptionPlayer(monologueLines, {
-      prev: document.getElementById('monoPrev'),
-      current: document.getElementById('monoCurrent'),
-      next: document.getElementById('monoNext')
-    }, ()=>{
-      document.getElementById('monoPauseBtn').style.display = 'none';
-      document.getElementById('monoChoiceRow').style.display = 'flex';
-      document.getElementById('monoChoiceHint').style.display = 'block';
-    }, { finalHoldMs: 2200 });
-    monoPlayer.start();
-  }
-
-  document.getElementById('monoPauseBtn').addEventListener('click', function(){
-    if(!monoPlayer) return;
-    const isPaused = monoPlayer.togglePause();
-    this.textContent = isPaused ? '▶ 繼續' : '⏸ 暫停';
-  });
-
-  // ---------- go.md：影片與字幕展示頁（依 Yes/No 版面切換） ----------
-  const videoLines = [
-    '有個名人說過一句話：「我需要你，不是因為寂寞，而是因為在所有能讓我感到幸福的風景裡，都有你的位子。」',
-    '我對你來說是特別的，能默默記住我的興趣食物，甚至是喜好',
-    '剛開始完全不熟，五條悟扭蛋是你給我的驚喜，明明都沒有說也都沒提，但你就是知道我喜歡',
-    '我喜歡吃文華，在我還沒下課時，已經幫我買好了',
-    '而我也幫你訂義大利麵，彼此有默契',
-    '你是如此貼心，有彼此的生活是多麼的安穩放鬆',
-    '但我卻讓你失望，我深感抱歉，我痛恨自己的懦弱',
-    '分手那瞬間我才醒悟、才下決定，要是我是你也會不耐煩',
-    '聽說兩個人相愛的機率是千分之五，遇見你已經花光了我所有的運氣',
-    '我實在沒有勇氣去接受失去你的後半生',
-    '開學後害怕新的開始',
-    '最後我想跟你說不要相信甚麼塔羅牌、玄學，那些真的阻礙自己',
-    '塔羅牌不是A就是B，命運千變萬化是自己掌握並決定，不要被控制侷限在框架裡',
-    '不想後悔、靠自己八字及信念，相信已經發的事',
-    '愛真的需要勇氣，請大膽的愛'
-  ];
-
-  const storyVideo = document.getElementById('storyVideo');
-  let vidPlayer = null;
-  const rewatchBtn = document.getElementById('btn-rewatch-video');
-
-  // ---------- Yes：文字跟影片分開看（先字幕全播完，再單獨播影片） ----------
-  function startSeparateFlow(){
-    const pageVideo = document.getElementById('page-video');
-    pageVideo.classList.remove('has-video');
-    pageVideo.classList.remove('video-only');
-    storyVideo.pause();
-    storyVideo.onended = null;
-    showPage('page-video');
-    vidPlayer = makeCaptionPlayer(videoLines, {
-      prev: document.getElementById('vidPrev'),
-      current: document.getElementById('vidCurrent'),
-      next: document.getElementById('vidNext')
-    }, ()=>{
-      // 字幕播完 → 接著單獨播影片
-      playVideoOnly();
-    });
-    vidPlayer.start();
-  }
-
-  function playVideoOnly(){
-    const pageVideo = document.getElementById('page-video');
-    pageVideo.classList.add('has-video');
-    pageVideo.classList.add('video-only');
-    document.getElementById('vidPauseBtn').style.display = 'inline-block';
-    storyVideo.currentTime = 0;
-    storyVideo.play().catch(()=>{});
-    storyVideo.onended = ()=>{ showPage('page-fireworks-invite'); };
-  }
-
-  // ---------- No：文字跟影片一起播（影片播完才換頁） ----------
-  function startTogetherFlow(){
-    const pageVideo = document.getElementById('page-video');
-    pageVideo.classList.add('has-video');
-    pageVideo.classList.remove('video-only');
-    document.getElementById('vidPauseBtn').style.display = 'inline-block';
-    storyVideo.currentTime = 0;
-    storyVideo.play().catch(()=>{});
-    storyVideo.onended = ()=>{
-      showPage('page-fireworks-invite');
-      rewatchBtn.style.display = 'inline-block';
-    };
-    showPage('page-video');
-    vidPlayer = makeCaptionPlayer(videoLines, {
-      prev: document.getElementById('vidPrev'),
-      current: document.getElementById('vidCurrent'),
-      next: document.getElementById('vidNext')
-    }, ()=>{ /* 字幕先播完沒關係，等影片播完才換頁 */ });
-    vidPlayer.start();
-  }
-
-  document.getElementById('mono-yes').addEventListener('click', startSeparateFlow);
-  document.getElementById('mono-no').addEventListener('click', startTogetherFlow);
-
-  rewatchBtn.addEventListener('click', ()=>{
-    rewatchBtn.style.display = 'none';
-    showPage('page-video');
-    playVideoOnly();
-  });
-
-  document.getElementById('vidPauseBtn').addEventListener('click', function(){
-    if(!vidPlayer) return;
-    const isPaused = vidPlayer.togglePause();
-    this.textContent = isPaused ? '▶ 繼續' : '⏸ 暫停';
-    // 暫停畫面/字幕，不中斷背景音樂；影片本身隨字幕暫停一起停
-    if(document.getElementById('page-video').classList.contains('has-video')){
-      if(isPaused) storyVideo.pause(); else storyVideo.play().catch(()=>{});
-    }
-  });
-
-  // ---------- go.md：淡水煙火邀請頁 → 繼續進入原本的行程邀請流程 ----------
-  document.getElementById('btn-continue-invite').addEventListener('click', ()=>{
-    showPage('page-invite');
-  });
 
   const btnNo = document.getElementById('btn-no');
   const pleaseText = document.getElementById('pleaseText');
@@ -1458,50 +890,43 @@
   ];
   let fwInterval = null;
   let fwActiveCount = 0;
-  const FW_MAX_ACTIVE = 5; // 同時最多幾發，維持流暢不卡頓
+  const FW_MAX_ACTIVE = 3; // 同時最多幾發，維持流暢不卡頓
 
-  function launchFirework(big){
+  function launchFirework(){
     if(fwActiveCount >= FW_MAX_ACTIVE) return;
     fwActiveCount++;
 
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const cx = w*0.12 + Math.random()*w*0.76;
-    const cy = h*0.12 + Math.random()*h*0.4;
+    const cx = w*0.15 + Math.random()*w*0.7;
+    const cy = h*0.15 + Math.random()*h*0.35;
     const palette = fwPalettes[Math.floor(Math.random()*fwPalettes.length)];
 
     const flash = document.createElement('div');
     flash.className = 'fw-flash';
     flash.style.left = cx+'px';
     flash.style.top = cy+'px';
-    if(big){
-      flash.style.transform = 'scale(1.4)';
-    }
     fwLayer.appendChild(flash);
-    setTimeout(()=>flash.remove(), 450);
+    setTimeout(()=>flash.remove(), 400);
 
-    const ringCount = big ? 2 : 1;
-    for(let r=0;r<ringCount;r++){
-      const sparkCount = big ? 26 : 16;
-      const baseDist = big ? (60 + r*30) : 34;
-      for(let i=0;i<sparkCount;i++){
-        const s = document.createElement('div');
-        s.className = 'fw-spark';
-        const angle = (Math.PI*2*i)/sparkCount + Math.random()*0.25;
-        const dist = baseDist + Math.random()*(big ? 55 : 30);
-        const color = palette[Math.floor(Math.random()*palette.length)];
-        s.style.left = cx+'px';
-        s.style.top = cy+'px';
-        s.style.background = color;
-        s.style.boxShadow = '0 0 6px 1.5px '+color;
-        s.style.setProperty('--fx', Math.cos(angle)*dist+'px');
-        s.style.setProperty('--fy', (Math.sin(angle)*dist + dist*0.3)+'px'); // 加一點重力墜落感
-        fwLayer.appendChild(s);
-        setTimeout(()=>s.remove(), 1300);
-      }
+    const sparkCount = 14;
+    for(let i=0;i<sparkCount;i++){
+      const s = document.createElement('div');
+      s.className = 'fw-spark';
+      const angle = (Math.PI*2*i)/sparkCount + Math.random()*0.25;
+      const dist = 34 + Math.random()*30;
+      const color = palette[Math.floor(Math.random()*palette.length)];
+      s.style.left = cx+'px';
+      s.style.top = cy+'px';
+      s.style.background = color;
+      s.style.boxShadow = '0 0 6px 1.5px '+color;
+      s.style.setProperty('--fx', Math.cos(angle)*dist+'px');
+      s.style.setProperty('--fy', (Math.sin(angle)*dist + dist*0.3)+'px'); // 加一點重力墜落感
+      fwLayer.appendChild(s);
+      setTimeout(()=>s.remove(), 1200);
     }
 
-    setTimeout(()=>{ fwActiveCount--; }, 1300);
+    setTimeout(()=>{ fwActiveCount--; }, 1200);
   }
 
   function startFireworks(){
