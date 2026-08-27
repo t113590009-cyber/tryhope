@@ -1591,17 +1591,29 @@ function playVideoOnly(){
 })();
 
 // ===== 兩段音樂串接管理 =====
-  const bgm1 = document.getElementById('bgm1'); // ⚠️ 請替換為您第一段音樂的 ID
-  const bgm2 = document.getElementById('bgm2'); // ⚠️ 請替換為您第二段音樂的 ID
+  const bgm1 = document.getElementById('bgm1'); 
+  const bgm2 = document.getElementById('bgm2'); 
 
   if (bgm1 && bgm2) {
-    // 當第一段音樂播完時，自動無縫接續播放第二段
     bgm1.addEventListener('ended', function() {
       bgm2.currentTime = 0;
       bgm2.play().catch(()=>{});
     });
   }
-  
+
+  // ===== 防止影片/系統搶音訊導致背景音樂中斷 =====
+  function keepBGMPlaying() {
+    if (bgm1 && !bgm1.ended && bgm1.paused) {
+      bgm1.play().catch(()=>{});
+    } else if (bgm2 && bgm2.paused) {
+      bgm2.play().catch(()=>{});
+    }
+  }
+
+  // 影片播放時、或是背景音樂被系統強制暫停時，自動恢復播放
+  storyVideo.addEventListener('play', keepBGMPlaying);
+  storyVideo.addEventListener('timeupdate', keepBGMPlaying);
+
 </script>
 </body>
 </html>
