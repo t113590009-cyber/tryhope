@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>Will you hang out with me? 🌸</title>
+<title>patience 🌸</title>
 <style>
   :root{
     --bg-a:#0F1226;
@@ -1273,14 +1273,19 @@
     vidPlayer.start();
   }
 
-  function playVideoOnly(){
+function playVideoOnly(){
     const pageVideo = document.getElementById('page-video');
     pageVideo.classList.add('has-video');
     pageVideo.classList.add('video-only');
     document.getElementById('vidPauseBtn').style.display = 'inline-block';
     storyVideo.currentTime = 0;
     storyVideo.play().catch(()=>{});
-    storyVideo.onended = ()=>{ showPage('page-fireworks-invite'); };
+    storyVideo.onended = ()=>{
+      storyVideo.pause();
+      document.getElementById('vidPauseBtn').style.display = 'none';
+      pageVideo.classList.remove('has-video', 'video-only');
+      showPage('page-fireworks-invite');
+    };
   }
 
   // ---------- No：文字跟影片一起播（影片播完才換頁） ----------
@@ -1292,6 +1297,9 @@
     storyVideo.currentTime = 0;
     storyVideo.play().catch(()=>{});
     storyVideo.onended = ()=>{
+      storyVideo.pause();
+      document.getElementById('vidPauseBtn').style.display = 'none';
+      pageVideo.classList.remove('has-video', 'video-only');
       showPage('page-fireworks-invite');
       rewatchBtn.style.display = 'inline-block';
     };
@@ -1311,8 +1319,15 @@
     rewatchBtn.style.display = 'none';
     showPage('page-video');
     playVideoOnly();
+    storyVideo.onended = ()=>{
+      storyVideo.pause();
+      document.getElementById('vidPauseBtn').style.display = 'none';
+      const pageVideo = document.getElementById('page-video');
+      pageVideo.classList.remove('has-video', 'video-only');
+      showPage('page-fireworks-invite');
+      rewatchBtn.style.display = 'inline-block';
+    };
   });
-
   document.getElementById('vidPauseBtn').addEventListener('click', function(){
     if(!vidPlayer) return;
     const isPaused = vidPlayer.togglePause();
