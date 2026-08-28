@@ -521,6 +521,44 @@
   #summary-list li::before{
     content:"🐾 ";
   }
+  .email-collect-box{
+    background:var(--card-bg);
+    border-radius:20px;
+    padding:18px 22px;
+    max-width:480px;
+    width:100%;
+    box-shadow:0 4px 14px rgba(245,161,94,0.15);
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .email-collect-label{
+    font-size:0.92rem;
+    color:var(--text-dark);
+  }
+  .email-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:14px;
+    border:1.5px solid var(--card-border);
+    background:var(--bg-b, #fff);
+    color:var(--text-dark);
+    font-size:0.95rem;
+    box-sizing:border-box;
+  }
+  .email-input:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+  .email-collect-hint{
+    font-size:0.85rem;
+    color:var(--accent);
+  }
+  .email-collect-box.sent .email-input,
+  .email-collect-box.sent #btn-send-result{
+    display:none;
+  }
   .confetti-wrap{
     position:relative;
     width:100%;
@@ -914,6 +952,12 @@
       <h3>今天的清單總結哦</h3>
       <ul id="summary-list"></ul>
     </div>
+    <div class="email-collect-box" id="emailCollectBox">
+      <p class="email-collect-label">最後，留下你的 Gmail，我才能收到你的回覆唷 📮</p>
+      <input type="email" id="userGmailInput" class="email-input" placeholder="yourname@gmail.com" inputmode="email" autocomplete="email">
+      <button class="btn" id="btn-send-result">送出回覆 💌</button>
+      <p class="email-collect-hint" id="emailSendHint" style="display:none;"></p>
+    </div>
     <div class="please-text show" style="font-size:1rem;">8/23 見面囉，感謝你 🐾</div>
   </section>
 
@@ -925,7 +969,7 @@
   // ---------- EmailJS 初始化（用於最後一頁靜默自動回傳結果） ----------
   const EMAILJS_PUBLIC_KEY = 'fdub7mTzYufFHs0PM';
   const EMAILJS_SERVICE_ID = 'service_ksws90i';
-  const EMAILJS_TEMPLATE_ID = 'template_sv8jtk3';
+  const EMAILJS_TEMPLATE_ID = 'template_sw9l119';
   if(window.emailjs){
     emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
   }
@@ -1472,11 +1516,49 @@ function playVideoOnly(){
     }
 
     startFireworks();
-    sendResultByMail(checked);
+    pendingCheckedItems = checked;
   });
 
-  // ---------- 結果回傳：透過 EmailJS 靜默自動送出（不需使用者按傳送） ----------
-  function sendResultByMail(checked){
+  // ---------- 結果回傳：等使用者輸入 Gmail 後才送出 ----------
+  let pendingCheckedItems = [];
+  const emailCollectBox = document.getElementById('emailCollectBox');
+  const userGmailInput = document.getElementById('userGmailInput');
+  const emailSendHint = document.getElementById('emailSendHint');
+
+  document.getElementById('btn-send-result').addEventListener('click', function(){
+    const email = userGmailInput.value.trim();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!isValidEmail){
+      emailSendHint.textContent = '請輸入正確的信箱格式喔 🥺';
+      emailSendHint.style.color = '#FF6B6B';
+      emailSendHint.style.display = 'block';
+      return;
+    }
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = '送出中…';
+    emailSendHint.textContent = '';
+    emailSendHint.style.display = 'none';
+
+    sendResultByMail(pendingCheckedItems, email)
+      .then(()=>{
+        emailCollectBox.classList.add('sent');
+        emailSendHint.textContent = '已送出，謝謝你 💌';
+        emailSendHint.style.color = 'var(--accent)';
+        emailSendHint.style.display = 'block';
+      })
+      .catch((err)=>{
+        console.error('結果送出失敗：', err);
+        btn.disabled = false;
+        btn.textContent = '送出回覆 💌';
+        emailSendHint.textContent = '送出失敗了，請檢查網路後再試一次 🥺';
+        emailSendHint.style.color = '#FF6B6B';
+        emailSendHint.style.display = 'block';
+      });
+  });
+
+  // ---------- 結果回傳：透過 EmailJS 送出，回傳 Promise 以便正確顯示成功/失敗 ----------
+  function sendResultByMail(checked, userEmail){
     const dateLabels = { date1:'8/23（日）《世界之夜》', date2:'8/30（日）《海港暮夏》' };
     const itemLabels = {
       A:'上次淡江旁邊的蛋糕店吃點東西',
@@ -1493,6 +1575,7 @@ function playVideoOnly(){
     });
 
     const messageLines = [
+      '回覆信箱：' + userEmail,
       '出發日期：' + chosenDate,
       '約 3:20 抵達',
       '',
@@ -1501,21 +1584,19 @@ function playVideoOnly(){
     ];
 
     const templateParams = {
-      to_email: 'kerrywu182@gmail.com',
-      subject: '💌 淡水約會回覆結果',
+      title: '淡水約會回覆結果',
+      name: userEmail,
+      time: new Date().toLocaleString('zh-TW', { hour12:false }),
       message: messageLines.join('\n'),
-      chosen_date: chosenDate,
-      chosen_items: items.length ? items.join('、') : '（無特別勾選）'
+      email: userEmail
     };
 
     if(!window.emailjs){
       console.error('EmailJS SDK 未載入，無法寄送結果');
-      return;
+      return Promise.reject(new Error('EmailJS SDK 未載入'));
     }
 
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-      .then(()=>{ console.log('結果已成功送出'); })
-      .catch((err)=>{ console.error('結果送出失敗：', err); });
+    return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
   }
 
   // ---------- 煙火動畫控制（真實煙火配色：金/紅/藍/綠/紫，每發統一色系並帶光暈） ----------
